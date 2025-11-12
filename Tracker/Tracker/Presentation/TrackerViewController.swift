@@ -14,6 +14,11 @@ final class TrackerViewController: UIViewController {
         
     }
     
+    private lazy var collectionView: UICollectionView = {
+        
+        return collectionView
+    }()
+    
     private lazy var emptyTrackerImage: UIImageView = {
         let image = UIImage(resource: .star)
         let imageView = UIImageView(image: image)
@@ -47,8 +52,6 @@ final class TrackerViewController: UIViewController {
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(resource: .plus), style: .plain, target: self, action: #selector(didTapPlusButton))
         navigationItem.leftBarButtonItem?.tintColor = .ypBlack
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.title = "Трекеры"
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = "Поиск"
         navigationItem.searchController = searchController
@@ -71,10 +74,17 @@ final class TrackerViewController: UIViewController {
         view.addSubview(emptyTrackerStackView)
     }
     
-    @objc private func didTapPlusButton(){}
-
+    @objc private func didTapPlusButton(){
+        let creatTrackerViewController = CreatTrackerViewController()
+        let newNavController = UINavigationController(rootViewController: creatTrackerViewController)
+        newNavController.modalPresentationStyle = .pageSheet
+        newNavController.modalTransitionStyle = .flipHorizontal
+        navigationController?.present(newNavController, animated: true) {
+            print("открыт экран создания трекера")
+        }
+        
+    }
+    
 }
-
-
-
-
+    
+    
