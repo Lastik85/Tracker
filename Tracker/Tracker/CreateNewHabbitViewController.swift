@@ -54,6 +54,8 @@ final class CreateNewHabbitViewController: UIViewController {
         textField.layer.masksToBounds = true
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 1))
         textField.leftViewMode = .always
+        textField.clearButtonMode = .whileEditing
+        textField.delegate = self
         return textField
     }()
     
@@ -141,5 +143,19 @@ extension CreateNewHabbitViewController: UITableViewDataSource {
 extension CreateNewHabbitViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+extension CreateNewHabbitViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let currentText = textField.text else { return true }
+        let newText = (currentText as NSString).replacingCharacters(in: range, with: string)
+        if newText.count > 38 {
+            cautionLabel.isHidden = false
+            return false
+        } else {
+            cautionLabel.isHidden = true
+            return true
+        }
     }
 }
