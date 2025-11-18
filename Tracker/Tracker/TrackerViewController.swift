@@ -8,6 +8,9 @@ import UIKit
 
 final class TrackerViewController: UIViewController, UISearchControllerDelegate {
     
+    var categories: [TrackerCategory] = []
+    var completedTrackers: [TrackerRecord] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white

@@ -15,6 +15,8 @@ final class CreateNewHabbitViewController: UIViewController {
         setupConstraints()
     }
     
+    private let cellName:[String] = ["Категория","Расписание"]
+    
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
         button.setTitle("Отменить", for: .normal)
@@ -22,6 +24,7 @@ final class CreateNewHabbitViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.ypRed.cgColor
+        button.addTarget(self, action: #selector(tapCancell), for: .touchUpInside)
         return button
     }()
     
@@ -73,12 +76,14 @@ final class CreateNewHabbitViewController: UIViewController {
     private func addSubviews(){
         view.addSubview(stackTextField)
         view.addSubview(buttonStackView)
+        view.addSubview(tableView)
         navigationItem.title = "Новая Привычка"
     }
     
     private func setupConstraints(){
         stackTextField.translatesAutoresizingMaskIntoConstraints = false
         buttonStackView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             stackTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             stackTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -88,7 +93,53 @@ final class CreateNewHabbitViewController: UIViewController {
             buttonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             buttonStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             buttonStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
-            buttonStackView.heightAnchor.constraint(equalToConstant: 60)
+            buttonStackView.heightAnchor.constraint(equalToConstant: 60),
+            
+            tableView.leadingAnchor.constraint(equalTo: stackTextField.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: stackTextField.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: stackTextField.bottomAnchor, constant: 24),
+            tableView.heightAnchor.constraint(equalToConstant: 150),
          ])
+    }
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.backgroundColor = .ypBackgroundDay
+        tableView.layer.cornerRadius = 16
+        tableView.rowHeight = 75
+        return tableView
+    }()
+    
+    @objc private func tapCancell(){
+         if presentingViewController != nil {
+             dismiss(animated: true)
+         } else {
+             navigationController?.popViewController(animated: true)
+         }
+    }
+}
+
+extension CreateNewHabbitViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return cellName.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "NewTracker")
+        cell.backgroundColor = .ypBackgroundDay
+        cell.textLabel?.text = cellName[indexPath.row]
+        cell.accessoryType = .disclosureIndicator
+        cell.detailTextLabel?.text = "Ky Ky"
+        cell.detailTextLabel?.textColor = .ypGray
+        return cell
+    }
+    
+}
+
+extension CreateNewHabbitViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
