@@ -23,6 +23,7 @@ final class CreateNewEventViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.ypRed.cgColor
+        button.addTarget(self, action: #selector(tapCancell), for: .touchUpInside)
         return button
     }()
     
@@ -32,6 +33,7 @@ final class CreateNewEventViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .ypGray
         button.layer.cornerRadius = 16
+        button.addTarget(self, action: #selector(tapCreate), for: .touchUpInside)
         return button
     }()
     
@@ -71,6 +73,22 @@ final class CreateNewEventViewController: UIViewController {
     
     private func navTitle(){
         navigationItem.title = "Новое нерегулярное событие"
+    }
+    
+    @objc private func tapCancell(){
+         if presentingViewController != nil {
+             dismiss(animated: true)
+         } else {
+             navigationController?.popViewController(animated: true)
+         }
+    }
+    
+    @objc private func tapCreate(){
+         if presentingViewController != nil {
+             dismiss(animated: true)
+         } else {
+             navigationController?.popViewController(animated: true)
+         }
     }
 }
 
