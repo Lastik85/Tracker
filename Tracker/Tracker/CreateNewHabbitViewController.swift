@@ -11,11 +11,17 @@ final class CreateNewHabbitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
+        
         addSubviews()
         setupConstraints()
     }
     
     private let cellName:[String] = ["Категория","Расписание"]
+    private var selectedCategory: String? {
+        didSet {
+            updateCategoryCell()
+        }
+    }
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
@@ -76,10 +82,8 @@ final class CreateNewHabbitViewController: UIViewController {
     }()
     
     private func addSubviews(){
-        view.addSubview(stackTextField)
-        view.addSubview(buttonStackView)
-        view.addSubview(tableView)
         navigationItem.title = "Новая Привычка"
+        [stackTextField,buttonStackView,tableView].forEach {view.addSubview($0)}
     }
     
     private func setupConstraints(){
@@ -101,25 +105,29 @@ final class CreateNewHabbitViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: stackTextField.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: stackTextField.bottomAnchor, constant: 24),
             tableView.heightAnchor.constraint(equalToConstant: 150),
-         ])
+        ])
     }
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.backgroundColor = .ypBackgroundDay
-        tableView.layer.cornerRadius = 16
-        tableView.rowHeight = 75
+        
         return tableView
     }()
     
     @objc private func tapCancell(){
-         if presentingViewController != nil {
-             dismiss(animated: true)
-         } else {
-             navigationController?.popViewController(animated: true)
-         }
+        if presentingViewController != nil {
+            dismiss(animated: true)
+        } else {
+            navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    private func updateCategoryCell() {
+        if let categoryCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) {
+            categoryCell.detailTextLabel?.text = selectedCategory
+        }
     }
 }
 
@@ -131,10 +139,17 @@ extension CreateNewHabbitViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "NewTracker")
         cell.backgroundColor = .ypBackgroundDay
+        tableView.layer.cornerRadius = 16
+        tableView.rowHeight = 75
         cell.textLabel?.text = cellName[indexPath.row]
         cell.accessoryType = .disclosureIndicator
-        cell.detailTextLabel?.text = "Ky Ky"
+        
         cell.detailTextLabel?.textColor = .ypGray
+        if indexPath.row == 0 {
+            cell.detailTextLabel?.text = selectedCategory
+        } else {
+            cell.detailTextLabel?.text = nil
+        }
         return cell
     }
     
@@ -143,6 +158,18 @@ extension CreateNewHabbitViewController: UITableViewDataSource {
 extension CreateNewHabbitViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        switch indexPath.row {
+        case 0:
+            let categoryVC = CategoryViewController()
+            categoryVC.delegate = self
+            categoryVC.selectedCategory = selectedCategory
+            navigationController?.pushViewController(categoryVC, animated: true)
+        case 1:
+            let scheduleVC = ScheduleViewController()
+            navigationController?.pushViewController(scheduleVC, animated: true)
+        default:
+            break
+        }
     }
 }
 
@@ -159,3 +186,10 @@ extension CreateNewHabbitViewController: UITextFieldDelegate {
         }
     }
 }
+
+extension CreateNewHabbitViewController: CategoryViewControllerDelegate {
+    func didSelectCategory(_ category: String) {
+        selectedCategory = category
+    }
+}
+

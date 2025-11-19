@@ -11,8 +11,5 @@ struct Tracker {
     var color: UIColor
     var emoji: String
     var schedule: [Week]
-}
-
-enum Week {
-    case monday, tuesday, wednesday, thursday, friday, saturday, sunday
+    
 }
