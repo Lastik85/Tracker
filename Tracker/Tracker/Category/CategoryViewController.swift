@@ -1,9 +1,3 @@
-//
-//  CategoryViewController.swift
-//  Tracker
-//
-//  Created by Андрей Пермяков on 18.11.2025.
-//
 import UIKit
 
 final class CategoryViewController: UIViewController {
@@ -18,13 +12,16 @@ final class CategoryViewController: UIViewController {
         addSubviews()
         setupConstraints()
         navigationItem.hidesBackButton = true
+        
     }
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
-        
+        tableView.rowHeight = 75
+        tableView.separatorStyle = .none
+        tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.reuseIdentifier)
         return tableView
     }()
     
@@ -41,7 +38,7 @@ final class CategoryViewController: UIViewController {
     
     private func addSubviews(){
         navigationItem.title = "Категория"
-        [tableView, createButton].forEach {view.addSubview($0)}
+        [tableView, createButton].forEach { view.addSubview($0) }
     }
     
     private func setupConstraints(){
@@ -77,17 +74,16 @@ extension CategoryViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "NewTracker")
-        cell.backgroundColor = .ypBackgroundDay
-        tableView.layer.cornerRadius = 16
-        tableView.rowHeight = 75
-        cell.textLabel?.text = nameCategory[indexPath.row]
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        cell.accessoryType = selectedCategory == nameCategory[indexPath.row] ? .checkmark : .none
-        
-        return cell
+    guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.reuseIdentifier, for: indexPath) as? CategoryTableViewCell else {
+        return UITableViewCell()
     }
     
+    let category = nameCategory[indexPath.row]
+    let isSelected = selectedCategory == category
+    
+    cell.configure(with: category, isSelected: isSelected)
+    return cell
+}
 }
 
 extension CategoryViewController: UITableViewDelegate {
@@ -101,7 +97,5 @@ extension CategoryViewController: UITableViewDelegate {
         }
         
         tableView.reloadData()
-        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
-

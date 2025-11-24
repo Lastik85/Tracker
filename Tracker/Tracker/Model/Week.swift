@@ -1,10 +1,3 @@
-//
-//  Week.swift
-//  Tracker
-//
-//  Created by Андрей Пермяков on 19.11.2025.
-//
-
 enum Week: String, CaseIterable {
     case monday = "Понедельник"
     case tuesday = "Вторник"
@@ -24,5 +17,14 @@ enum Week: String, CaseIterable {
         case .saturday: return "Сб"
         case .sunday: return "Вс"
         }
+    }
+}
+extension Week: Comparable {
+    static func < (lhs: Week, rhs: Week) -> Bool {
+        guard let lhsIndex = Week.allCases.firstIndex(of: lhs),
+              let rhsIndex = Week.allCases.firstIndex(of: rhs) else {
+            return false
+        }
+        return lhsIndex < rhsIndex
     }
 }
