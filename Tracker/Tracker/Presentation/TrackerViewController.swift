@@ -1,6 +1,7 @@
 import UIKit
 
 final class TrackerViewController: UIViewController, UISearchControllerDelegate {
+
     
     var categories: [TrackerCategory] = []
     var completedTrackers: [TrackerRecord] = []
@@ -53,15 +54,15 @@ final class TrackerViewController: UIViewController, UISearchControllerDelegate 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-    private lazy var collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .systemBackground
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        return collectionView
-    }()
+//    private lazy var collectionView: UICollectionView = {
+//        let layout = UICollectionViewFlowLayout()
+//        layout.scrollDirection = .vertical
+//        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+//        collectionView.backgroundColor = .systemBackground
+//        collectionView.delegate = self
+//        collectionView.dataSource = self
+//        return collectionView
+//    }()
     
     private func setupConstraints(){
         emptyTrackerImage.translatesAutoresizingMaskIntoConstraints = false
@@ -86,19 +87,19 @@ final class TrackerViewController: UIViewController, UISearchControllerDelegate 
     }
 }
 
-extension TrackerViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        <#code#>
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        <#code#>
-    }
-    
-    
-}
-
-extension TrackerViewController: UICollectionViewDelegateFlowLayout{
-    
-}
+//extension TrackerViewController: UICollectionViewDataSource {
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        <#code#>
+//    }
+//    
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        <#code#>
+//    }
+//    
+//    
+//}
+//
+//extension TrackerViewController: UICollectionViewDelegateFlowLayout{
+//    
+//}
 
