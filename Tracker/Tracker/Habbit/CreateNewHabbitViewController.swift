@@ -8,11 +8,13 @@ final class CreateNewHabbitViewController: UIViewController {
         
         addSubviews()
         setupConstraints()
+        enableCreateButton()
     }
     
     private let cellName:[String] = ["Категория","Расписание"]
     private var selectedCategory: String?
     private var selectedSchedule: Set<Week> = []
+    private var trackerName: String = ""
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
@@ -21,6 +23,7 @@ final class CreateNewHabbitViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.ypRed.cgColor
+        button.isEnabled = false
         button.addTarget(self, action: #selector(tapCancell), for: .touchUpInside)
         return button
     }()
@@ -31,6 +34,7 @@ final class CreateNewHabbitViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .ypGray
         button.layer.cornerRadius = 16
+        button.addTarget(self, action: #selector(tapCreate), for: .touchUpInside)
         return button
     }()
     
@@ -53,6 +57,7 @@ final class CreateNewHabbitViewController: UIViewController {
         textField.leftViewMode = .always
         textField.clearButtonMode = .whileEditing
         textField.delegate = self
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         return textField
     }()
     
@@ -120,18 +125,27 @@ final class CreateNewHabbitViewController: UIViewController {
         }
     }
     
-    private func updateCells() {
-        tableView.reloadData()
+    @objc private func tapCreate() {
+        print("tapped create")
+    }
+    
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        trackerName = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        enableCreateButton()
     }
     
     private func setSelectedCategory(_ category: String) {
         selectedCategory = category
-        updateCells()
+        let indexPath = IndexPath(row: 0, section: 0)
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+        enableCreateButton()
     }
     
     private func setSelectedSchedule(_ schedule: Set<Week>) {
         selectedSchedule = schedule
-        updateCells()
+        let indexPath = IndexPath(row: 1, section: 0)
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+        enableCreateButton()
     }
     
     private func formatScheduleText() -> String {
@@ -141,6 +155,21 @@ final class CreateNewHabbitViewController: UIViewController {
             return "Каждый день"
         }
         return sortedDays.map { $0.shortName }.joined(separator: ", ")
+    }
+    
+    private func enableCreateButton() {
+        guard let text = nameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !text.isEmpty,
+              text.count <= 38,
+              let category = selectedCategory,
+              !category.isEmpty,
+              !selectedSchedule.isEmpty else {
+            createButton.isEnabled = false
+            createButton.backgroundColor = .ypGray
+            return
+        }
+        createButton.isEnabled = true
+        createButton.backgroundColor = .ypBlackDay
     }
 }
 
