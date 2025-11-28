@@ -6,8 +6,8 @@ final class TapBarViewController: UITabBarController {
         super.viewDidLoad( )
         setupViewControllers()
     }
+    
     private func setupViewControllers() {
-        
         
         let trackerViewController = TrackerViewController()
         trackerViewController.tabBarItem = UITabBarItem(

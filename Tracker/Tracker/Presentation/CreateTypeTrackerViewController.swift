@@ -2,13 +2,11 @@ import UIKit
 
 final class CreateTypeTrackerViewController: UIViewController {
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-        setupViews()
-        setupConstraints()
-        navSetup()
-    }
+    // MARK: - Properties
+    
+    weak var delegate: AddNewTrackerDelegate?
+    
+    // MARK: - UI Elements
     
     private lazy var habbitButton: UIButton = {
         let button = UIButton(type: .system)
@@ -40,6 +38,18 @@ final class CreateTypeTrackerViewController: UIViewController {
         return stackView
     }()
     
+    // MARK: - Lifecycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        navigationItem.title = "Создать трекер"
+        view.addSubview(stackView)
+        setupConstraints()
+    }
+    
+    // MARK: - Private Methods
+    
     private func setupConstraints() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -51,25 +61,16 @@ final class CreateTypeTrackerViewController: UIViewController {
         ])
     }
     
-    private func navSetup() {
-        navigationItem.title = "Создать трекер"
-    }
-    
-    private func setupViews() {
-        view.addSubview(stackView)
-    }
+    // MARK: - Actions
     
     @objc func didTapHabbitButton() {
-        let createNewHabbitVC = CreateNewHabbitViewController()
-        let newNavController = UINavigationController(rootViewController: createNewHabbitVC)
-        navigationController?.present(newNavController, animated: true)
+        let createnewHabbitVC = CreateNewHabbitViewController()
+        createnewHabbitVC.delegate = delegate
+        navigationController?.pushViewController(createnewHabbitVC, animated: true)
     }
     
     @objc func didTapAnIrregularEventButton() {
         let createNewEventVC = CreateNewEventViewController()
-        let newNavController = UINavigationController(rootViewController: createNewEventVC)
-        navigationController?.present(newNavController, animated: true)
-        
+        navigationController?.pushViewController(createNewEventVC, animated: true)
     }
 }
-

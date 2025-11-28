@@ -1,23 +1,18 @@
 import UIKit
 
 final class TrackerViewController: UIViewController {
-
+    
+    // MARK: - Properties
+    
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
     private var currentDate = Date()
-
+    
     private let filterService = TrackerFilterService()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupUI()
-        setupConstraints()
-        setupNavigationBar()
-        updateVisibleCategories()
-        //setupMockData()
-    }
-
+    // MARK: - UI Elements
+    
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
@@ -60,28 +55,51 @@ final class TrackerViewController: UIViewController {
         stackView.spacing = 8
         return stackView
     }()
-
-    private func setupUI() {
-        view.backgroundColor = .ypWhiteDay
-        view.addSubview(collectionView)
-        view.addSubview(emptyTrackerStackView)
+    
+    private lazy var filterButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = .ypBlue
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        button.setTitle("Фильтры", for: .normal)
+        button.setTitleColor(.ypWhiteDay, for: .normal)
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 16
+        button.addTarget(self, action: #selector(tapFilter), for: .touchUpInside)
+        return button
+    }()
+    
+    // MARK: - Lifecycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+        setupConstraints()
+        setupNavigationBar()
+        updateVisibleCategories()
     }
     
-        private func setupNavigationBar() {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(resource: .plus), style: .plain, target: self, action: #selector(addTracker))
-            navigationItem.leftBarButtonItem?.tintColor = .black
-            navigationController?.navigationBar.prefersLargeTitles = true
-            let searchController = UISearchController(searchResultsController: nil)
-            searchController.searchBar.placeholder = "Поиск"
-            navigationItem.searchController = searchController
-            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-        }
+    // MARK: - Private Methods
+    
+    private func setupUI() {
+        view.backgroundColor = .ypWhiteDay
+        [collectionView, emptyTrackerStackView, filterButton].forEach {view.addSubview($0)}
+        filterButton.isHidden = true
+    }
+    
+    private func setupNavigationBar() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(resource: .plus), style: .plain, target: self, action: #selector(addTracker))
+        navigationItem.leftBarButtonItem?.tintColor = .black
+        navigationController?.navigationBar.prefersLargeTitles = true
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "Поиск"
+        navigationItem.searchController = searchController
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+    }
     
     private func setupConstraints() {
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        emptyTrackerImage.translatesAutoresizingMaskIntoConstraints = false
-        emptyTrackerStackView.translatesAutoresizingMaskIntoConstraints = false
-        
+        [collectionView, emptyTrackerStackView, datePicker, filterButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -93,31 +111,25 @@ final class TrackerViewController: UIViewController {
             emptyTrackerStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyTrackerStackView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             
-            datePicker.widthAnchor.constraint(equalToConstant: 100)
+            datePicker.widthAnchor.constraint(equalToConstant: 100),
+            
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
+            filterButton.widthAnchor.constraint(equalToConstant: 114),
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            filterButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor)
         ])
     }
     
-    @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
-        currentDate = sender.date
-        updateVisibleCategories()
-    }
-    
-    @objc private func addTracker() {
-        let createTypeVC = CreateTypeTrackerViewController()
-        let navController = UINavigationController(rootViewController: createTypeVC)
-        present(navController, animated: true)
-    }
-
     private func updateVisibleCategories() {
         let calendar = Calendar.current
         let selectedWeekday = calendar.component(.weekday, from: currentDate)
-        
         visibleCategories = filterService.filterVisibleCategories(
             categories: categories,
             selectedWeekday: selectedWeekday
         )
-        
-        emptyTrackerStackView.isHidden = !visibleCategories.isEmpty
+        let hasTrackers = !visibleCategories.isEmpty
+        emptyTrackerStackView.isHidden = hasTrackers
+        filterButton.isHidden = !hasTrackers
         collectionView.reloadData()
     }
     
@@ -145,7 +157,7 @@ final class TrackerViewController: UIViewController {
     
     private func showFutureDateAlert() {
         let alert = UIAlertController(
-            title: "Нельзя отмечать будущие даты",
+            title: "Нельзя отметить будущие даты",
             message: "Вы можете отмечать трекеры только за прошедшие и текущие даты",
             preferredStyle: .alert
         )
@@ -153,33 +165,27 @@ final class TrackerViewController: UIViewController {
         present(alert, animated: true)
     }
     
-//    private func setupMockData() {
-//        let mockTrackers = [
-//            Tracker(
-//                id: UUID(),
-//                name: "Поливать растения",
-//              color: .colorSelection5,
-//                emoji: "💧",
-//                schedule: Set([.monday, .wednesday, .friday, .sunday])
-//            ),
-//            Tracker(
-//                id: UUID(),
-//                name: "Читать книгу",
-//                color: .colorSelection5,
-//                emoji: "📚",
-//                schedule: Set([.tuesday, .thursday, .saturday])
-//            )
-//        ]
-//        
-//        let mockCategories = [
-//            TrackerCategory(title: "Домашний уют", trackers: [mockTrackers[0]]),
-//            TrackerCategory(title: "Саморазвитие", trackers: [mockTrackers[1]])
-//        ]
-//        
-//        categories = mockCategories
-//        updateVisibleCategories()
-//    }
+    // MARK: - Actions
+    
+    @objc private func tapFilter() {
+        print("кнопка фильтры пока не реализована")
+    }
+    
+    @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
+        currentDate = sender.date
+        updateVisibleCategories()
+        print("Выбраная дата: \(currentDate)")
+    }
+    
+    @objc private func addTracker() {
+        let createTypeVC = CreateTypeTrackerViewController()
+        createTypeVC.delegate = self
+        let navController = UINavigationController(rootViewController: createTypeVC)
+        present(navController, animated: true)
+    }
 }
+
+// MARK: - UICollectionViewDataSource
 
 extension TrackerViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -230,6 +236,8 @@ extension TrackerViewController: UICollectionViewDataSource {
     }
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
+
 extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
@@ -249,5 +257,29 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 24, left: 0, bottom: 16, right: 0)
+    }
+}
+
+// MARK: - AddNewTrackerDelegate
+
+extension TrackerViewController: AddNewTrackerDelegate {
+    func didCreateTracker(_ tracker: Tracker, categoryTitle: String) {
+        var updatedCategories = categories
+        if let index = updatedCategories.firstIndex(where: { $0.title == categoryTitle }) {
+            let existingCategory = updatedCategories[index]
+            let updatedTrackers = existingCategory.trackers + [tracker]
+            let updatedCategory = TrackerCategory(
+                title: existingCategory.title,
+                trackers: updatedTrackers
+            )
+            updatedCategories[index] = updatedCategory
+        } else {
+            let newCategory = TrackerCategory(title: categoryTitle, trackers: [tracker])
+            updatedCategories.append(newCategory)
+        }
+        categories = updatedCategories
+        updateVisibleCategories()
+        
+        print("Создана Привычка: \(tracker.name) в категории: \(categoryTitle)")
     }
 }

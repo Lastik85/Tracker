@@ -2,9 +2,13 @@ import UIKit
 
 final class ScheduleViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private let week: [Week] = Week.allCases
     var selectedDays: Set<Week> = []
     weak var delegate: ScheduleViewControllerDelegate?
+    
+    // MARK: - UI Elements
     
     private lazy var doneButton: UIButton = {
         let button = UIButton()
@@ -29,7 +33,9 @@ final class ScheduleViewController: UIViewController {
         tableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.reuseIdentifier)
         return tableView
     }()
-
+    
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhiteDay
@@ -38,18 +44,19 @@ final class ScheduleViewController: UIViewController {
         setupConstraints()
     }
     
-    private func addSubviews(){
+    // MARK: - Private Methods
+    
+    private func addSubviews() {
         navigationItem.title = "Расписание"
         [tableView, doneButton].forEach { view.addSubview($0) }
     }
     
-    private func setupConstraints(){
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        doneButton.translatesAutoresizingMaskIntoConstraints = false
+    private func setupConstraints() {
+        [tableView, doneButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16), 
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             tableView.heightAnchor.constraint(equalToConstant: 525),
             
@@ -57,7 +64,6 @@ final class ScheduleViewController: UIViewController {
             doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             doneButton.heightAnchor.constraint(equalToConstant: 60)
-            
         ])
     }
     
@@ -73,12 +79,6 @@ final class ScheduleViewController: UIViewController {
         return selectedDays.contains(day)
     }
     
-    @objc private func doneButtonTapped() {
-        delegate?.didSelectSchedule(selectedDays)
-        navigationController?.popViewController(animated: true)
-    }
-    
-    
     private func addSeparator(to cell: UITableViewCell) {
         let separator = UIView()
         separator.backgroundColor = .ypGray
@@ -92,7 +92,16 @@ final class ScheduleViewController: UIViewController {
             separator.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
+    
+    // MARK: - Actions
+    
+    @objc private func doneButtonTapped() {
+        delegate?.didSelectSchedule(selectedDays)
+        navigationController?.popViewController(animated: true)
+    }
 }
+
+// MARK: - UITableViewDataSource
 
 extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -100,7 +109,10 @@ extension ScheduleViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseIdentifier, for: indexPath) as? ScheduleTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ScheduleTableViewCell.reuseIdentifier,
+            for: indexPath
+        ) as? ScheduleTableViewCell else {
             return UITableViewCell()
         }
         
@@ -114,13 +126,15 @@ extension ScheduleViewController: UITableViewDataSource {
         }
         
         cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-         if indexPath.row < week.count - 1 {
-             addSeparator(to: cell)
-         }
+        if indexPath.row < week.count - 1 {
+            addSeparator(to: cell)
+        }
         
         return cell
     }
 }
+
+// MARK: - UITableViewDelegate
 
 extension ScheduleViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

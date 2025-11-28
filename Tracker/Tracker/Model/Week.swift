@@ -19,7 +19,7 @@ enum Week: String, CaseIterable {
         case .sunday: return "Вс"
         }
     }
-    var CalendarDay: Int {
+    var сalendarDay: Int {
         switch self{
         case .monday: return 2
         case .tuesday: return 3

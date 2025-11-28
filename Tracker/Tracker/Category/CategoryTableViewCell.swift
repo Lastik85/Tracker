@@ -2,6 +2,8 @@ import UIKit
 
 final class CategoryTableViewCell: UITableViewCell {
 
+    // MARK: - Properties
+    
     static let reuseIdentifier = "CategoryCell"
 
     private lazy var titleLabel: UILabel = {
@@ -10,6 +12,8 @@ final class CategoryTableViewCell: UITableViewCell {
         label.textColor = .ypBlackDay
         return label
     }()
+    
+    // MARK: - Initialization
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -21,6 +25,8 @@ final class CategoryTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Methods
+    
     func configure(with title: String, isSelected: Bool) {
         titleLabel.text = title
         accessoryType = isSelected ? .checkmark : .none
@@ -29,6 +35,8 @@ final class CategoryTableViewCell: UITableViewCell {
         layer.masksToBounds = true
         selectionStyle = .none
     }
+    
+    // MARK: - Private Methods
     
     private func setupCell() {
         contentView.addSubview(titleLabel)
@@ -43,6 +51,8 @@ final class CategoryTableViewCell: UITableViewCell {
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
+    
+    // MARK: - Lifecycle
     
     override func prepareForReuse() {
         super.prepareForReuse()

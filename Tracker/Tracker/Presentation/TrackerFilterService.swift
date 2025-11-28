@@ -8,7 +8,7 @@ final class TrackerFilterService {
     ) -> [TrackerCategory] {
         return categories.compactMap { category in
             let filteredTrackers = category.trackers.filter { tracker in
-                let matchesSchedule = tracker.schedule.map { $0.CalendarDay }.contains(selectedWeekday)
+                let matchesSchedule = tracker.schedule.map { $0.сalendarDay }.contains(selectedWeekday)
                 return matchesSchedule
             }
             

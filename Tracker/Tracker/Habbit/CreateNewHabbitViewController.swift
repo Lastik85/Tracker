@@ -2,19 +2,16 @@ import UIKit
 
 final class CreateNewHabbitViewController: UIViewController {
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.view.backgroundColor = .white
-        
-        addSubviews()
-        setupConstraints()
-        enableCreateButton()
-    }
+    // MARK: - Properties
     
-    private let cellName:[String] = ["Категория","Расписание"]
+    weak var delegate: AddNewTrackerDelegate?
+    
+    private let cellName: [String] = ["Категория", "Расписание"]
     private var selectedCategory: String?
     private var selectedSchedule: Set<Week> = []
     private var trackerName: String = ""
+    
+    // MARK: - UI Elements
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
@@ -24,7 +21,7 @@ final class CreateNewHabbitViewController: UIViewController {
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.ypRed.cgColor
         button.isEnabled = false
-        button.addTarget(self, action: #selector(tapCancell), for: .touchUpInside)
+        button.addTarget(self, action: #selector(tapCancel), for: .touchUpInside)
         return button
     }()
     
@@ -90,15 +87,26 @@ final class CreateNewHabbitViewController: UIViewController {
         return tableView
     }()
     
-    private func addSubviews(){
-        navigationItem.title = "Новая Привычка"
-        [stackTextField,buttonStackView,tableView].forEach {view.addSubview($0)}
+    // MARK: - Lifecycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.backgroundColor = .white
+        navigationItem.hidesBackButton = true
+        addSubviews()
+        setupConstraints()
+        enableCreateButton()
     }
     
-    private func setupConstraints(){
-        stackTextField.translatesAutoresizingMaskIntoConstraints = false
-        buttonStackView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+    // MARK: - Private Methods
+    
+    private func addSubviews() {
+        navigationItem.title = "Новая Привычка"
+        [stackTextField, buttonStackView, tableView].forEach { view.addSubview($0) }
+    }
+    
+    private func setupConstraints() {
+        [stackTextField, buttonStackView, tableView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             stackTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             stackTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -115,23 +123,6 @@ final class CreateNewHabbitViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: stackTextField.bottomAnchor, constant: 24),
             tableView.heightAnchor.constraint(equalToConstant: 150),
         ])
-    }
-    
-    @objc private func tapCancell(){
-        if presentingViewController != nil {
-            dismiss(animated: true)
-        } else {
-            navigationController?.popViewController(animated: true)
-        }
-    }
-    
-    @objc private func tapCreate() {
-        print("tapped create")
-    }
-    
-    @objc private func textFieldDidChange(_ textField: UITextField) {
-        trackerName = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        enableCreateButton()
     }
     
     private func setSelectedCategory(_ category: String) {
@@ -171,7 +162,42 @@ final class CreateNewHabbitViewController: UIViewController {
         createButton.isEnabled = true
         createButton.backgroundColor = .ypBlackDay
     }
+    
+    // MARK: - Actions
+    
+    @objc private func tapCancel() {
+        if presentingViewController != nil {
+            dismiss(animated: true)
+        } else {
+            navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    @objc private func tapCreate() {
+        guard let category = selectedCategory,
+              !trackerName.isEmpty,
+              !selectedSchedule.isEmpty else {
+            return
+        }
+        let newTracker = Tracker(
+            id: UUID(),
+            name: trackerName,
+            color: .colorSelection5,
+            emoji: "😭",
+            schedule: selectedSchedule
+        )
+        delegate?.didCreateTracker(newTracker, categoryTitle: category)
+        
+        dismiss(animated: true)
+    }
+    
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        trackerName = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        enableCreateButton()
+    }
 }
+
+// MARK: - UITableViewDataSource
 
 extension CreateNewHabbitViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -179,7 +205,10 @@ extension CreateNewHabbitViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTrackerTableViewCell.reuseIdentifier, for: indexPath) as? SettingsTrackerTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: SettingsTrackerTableViewCell.reuseIdentifier,
+            for: indexPath
+        ) as? SettingsTrackerTableViewCell else {
             return UITableViewCell()
         }
         
@@ -199,6 +228,8 @@ extension CreateNewHabbitViewController: UITableViewDataSource {
         return cell
     }
 }
+
+// MARK: - UITableViewDelegate
 
 extension CreateNewHabbitViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -220,6 +251,8 @@ extension CreateNewHabbitViewController: UITableViewDelegate {
     }
 }
 
+// MARK: - UITextFieldDelegate
+
 extension CreateNewHabbitViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let currentText = textField.text else { return true }
@@ -234,11 +267,15 @@ extension CreateNewHabbitViewController: UITextFieldDelegate {
     }
 }
 
+// MARK: - CategoryViewControllerDelegate
+
 extension CreateNewHabbitViewController: CategoryViewControllerDelegate {
     func didSelectCategory(_ category: String) {
         setSelectedCategory(category)
     }
 }
+
+// MARK: - ScheduleViewControllerDelegate
 
 extension CreateNewHabbitViewController: ScheduleViewControllerDelegate {
     func didSelectSchedule(_ selectedDays: Set<Week>) {

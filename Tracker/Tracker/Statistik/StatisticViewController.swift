@@ -1,12 +1,16 @@
 import UIKit
 
 final class StatisticViewController: UIViewController {
+    
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         addSubviews()
         setupConstraints()
-        
     }
+    
+    // MARK: - UI Elements
     
     private lazy var emptyStatImage: UIImageView = {
         let image = UIImage(resource: .emptyState)
@@ -29,6 +33,8 @@ final class StatisticViewController: UIViewController {
         stackView.spacing = 8
         return stackView
     }()
+    
+    // MARK: - Private Methods
     
     private func addSubviews() {
         view.addSubview(emptyStatStackView)

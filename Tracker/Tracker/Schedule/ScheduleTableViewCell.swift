@@ -2,19 +2,15 @@ import UIKit
 
 final class ScheduleTableViewCell: UITableViewCell {
     
-
-    var onSwitchChanged: ((Bool) -> Void)?
+    // MARK: - Properties
+    
     static let reuseIdentifier = "ScheduleTableViewCell"
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupCell()
-        setupConstraints()
-    }
+    // MARK: - Public Properties
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    var onSwitchChanged: ((Bool) -> Void)?
+    
+    // MARK: - UI Elements
     
     private lazy var dayNameLabel: UILabel = {
         let label = UILabel()
@@ -30,22 +26,35 @@ final class ScheduleTableViewCell: UITableViewCell {
         return switchControl
     }()
     
+    // MARK: - Initialization
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupCell()
+        setupConstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Public Methods
+    
     func configure(with dayName: String, isSelected: Bool) {
         dayNameLabel.text = dayName
         switchControl.isOn = isSelected
     }
     
+    // MARK: - Private Methods
+    
     private func setupCell() {
-        contentView.addSubview(dayNameLabel)
-        contentView.addSubview(switchControl)
+        [dayNameLabel, switchControl].forEach { contentView.addSubview($0) }
         contentView.backgroundColor = .ypBackgroundDay
         selectionStyle = .none
     }
     
     private func setupConstraints() {
-        dayNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        switchControl.translatesAutoresizingMaskIntoConstraints = false
-        
+        [dayNameLabel, switchControl].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             dayNameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             dayNameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
@@ -55,9 +64,13 @@ final class ScheduleTableViewCell: UITableViewCell {
         ])
     }
     
+    // MARK: - Actions
+    
     @objc private func switchValueChanged(_ sender: UISwitch) {
         onSwitchChanged?(sender.isOn)
     }
+    
+    // MARK: - Lifecycle
     
     override func prepareForReuse() {
         super.prepareForReuse()

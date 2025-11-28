@@ -1,9 +1,13 @@
 import UIKit
 
 final class SettingsTrackerTableViewCell: UITableViewCell {
-
+    
+    // MARK: - Properties
+    
     static let reuseIdentifier = "SettingsCell"
-
+    
+    // MARK: - UI Elements
+    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
@@ -26,7 +30,9 @@ final class SettingsTrackerTableViewCell: UITableViewCell {
         stackView.alignment = .leading
         return stackView
     }()
-
+    
+    // MARK: - Initialization
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupCell()
@@ -36,7 +42,9 @@ final class SettingsTrackerTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    // MARK: - Public Methods
+    
     func configure(with title: String, subtitle: String?) {
         titleLabel.text = title
         subtitleLabel.text = subtitle
@@ -44,7 +52,9 @@ final class SettingsTrackerTableViewCell: UITableViewCell {
         accessoryType = .disclosureIndicator
         tintColor = .ypGray
     }
-
+    
+    // MARK: - Private Methods
+    
     private func setupCell() {
         contentView.addSubview(labelsStackView)
         backgroundColor = .ypBackgroundDay
@@ -59,6 +69,8 @@ final class SettingsTrackerTableViewCell: UITableViewCell {
             labelsStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
+    
+    // MARK: - Lifecycle
     
     override func prepareForReuse() {
         super.prepareForReuse()

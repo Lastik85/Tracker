@@ -2,18 +2,13 @@ import UIKit
 
 final class CategoryViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private let nameCategory = ["Важное"]
     var selectedCategory: String?
     weak var delegate: CategoryViewControllerDelegate?
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .ypWhiteDay
-        addSubviews()
-        setupConstraints()
-        navigationItem.hidesBackButton = true
-        
-    }
+    // MARK: - UI Elements
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -36,14 +31,25 @@ final class CategoryViewController: UIViewController {
         return button
     }()
     
-    private func addSubviews(){
+    // MARK: - Lifecycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .ypWhiteDay
+        addSubviews()
+        setupConstraints()
+        navigationItem.hidesBackButton = true
+    }
+    
+    // MARK: - Private Methods
+    
+    private func addSubviews() {
         navigationItem.title = "Категория"
         [tableView, createButton].forEach { view.addSubview($0) }
     }
     
-    private func setupConstraints(){
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        createButton.translatesAutoresizingMaskIntoConstraints = false
+    private func setupConstraints() {
+        [tableView, createButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -58,7 +64,9 @@ final class CategoryViewController: UIViewController {
         ])
     }
     
-    @objc private func tapCreateButton(){
+    // MARK: - Actions
+    
+    @objc private func tapCreateButton() {
         if let selectedCategory = selectedCategory {
             delegate?.didSelectCategory(selectedCategory)
             navigationController?.popViewController(animated: true)
@@ -68,23 +76,30 @@ final class CategoryViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
+
 extension CategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return nameCategory.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.reuseIdentifier, for: indexPath) as? CategoryTableViewCell else {
-        return UITableViewCell()
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: CategoryTableViewCell.reuseIdentifier,
+            for: indexPath
+        ) as? CategoryTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        let category = nameCategory[indexPath.row]
+        let isSelected = selectedCategory == category
+        
+        cell.configure(with: category, isSelected: isSelected)
+        return cell
     }
-    
-    let category = nameCategory[indexPath.row]
-    let isSelected = selectedCategory == category
-    
-    cell.configure(with: category, isSelected: isSelected)
-    return cell
 }
-}
+
+// MARK: - UITableViewDelegate
 
 extension CategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

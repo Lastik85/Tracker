@@ -2,7 +2,11 @@ import UIKit
 
 final class TrackerCategoryHeader: UICollectionReusableView {
     
+    // MARK: - Properties
+    
     static let reuseIdentifier = "TrackerCategoryHeader"
+    
+    // MARK: - UI Elements
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -11,6 +15,8 @@ final class TrackerCategoryHeader: UICollectionReusableView {
         label.textAlignment = .left
         return label
     }()
+    
+    // MARK: - Initialization
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -21,6 +27,8 @@ final class TrackerCategoryHeader: UICollectionReusableView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Private Methods
     
     private func setupUI() {
         addSubview(titleLabel)
@@ -37,9 +45,13 @@ final class TrackerCategoryHeader: UICollectionReusableView {
         ])
     }
     
+    // MARK: - Public Methods
+    
     func configure(with title: String) {
         titleLabel.text = title
     }
+    
+    // MARK: - Lifecycle
     
     override func prepareForReuse() {
         super.prepareForReuse()
