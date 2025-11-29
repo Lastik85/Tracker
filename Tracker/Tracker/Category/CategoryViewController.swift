@@ -80,7 +80,7 @@ final class CategoryViewController: UIViewController {
 
 extension CategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return nameCategory.count
+        nameCategory.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -105,11 +105,7 @@ extension CategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let categoryTitle = nameCategory[indexPath.row]
         
-        if selectedCategory == categoryTitle {
-            selectedCategory = nil
-        } else {
-            selectedCategory = categoryTitle
-        }
+        selectedCategory = selectedCategory == categoryTitle ? nil : categoryTitle
         
         tableView.reloadData()
     }

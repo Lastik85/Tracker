@@ -8,14 +8,14 @@ final class CreateTypeTrackerViewController: UIViewController {
     
     // MARK: - UI Elements
     
-    private lazy var habbitButton: UIButton = {
+    private lazy var habitButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = .ypBlackDay
         button.setTitle("Привычка", for: .normal)
         button.layer.cornerRadius = 16
         button.tintColor = .white
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.addTarget(self, action: #selector(didTapHabbitButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapHabitButton), for: .touchUpInside)
         return button
     }()
     
@@ -31,7 +31,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [habbitButton, anIrregularEventButton])
+        let stackView = UIStackView(arrangedSubviews: [habitButton, anIrregularEventButton])
         stackView.distribution = .fillEqually
         stackView.axis = .vertical
         stackView.spacing = 16
@@ -57,20 +57,21 @@ final class CreateTypeTrackerViewController: UIViewController {
             stackView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            habbitButton.heightAnchor.constraint(equalToConstant: 60)
+            habitButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     
     // MARK: - Actions
     
-    @objc func didTapHabbitButton() {
-        let createnewHabbitVC = CreateNewHabbitViewController()
-        createnewHabbitVC.delegate = delegate
-        navigationController?.pushViewController(createnewHabbitVC, animated: true)
+    @objc func didTapHabitButton() {
+        let createNewHabitVC = CreateNewHabitViewController()
+        createNewHabitVC.delegate = delegate
+        navigationController?.pushViewController(createNewHabitVC, animated: true)
     }
     
     @objc func didTapAnIrregularEventButton() {
         let createNewEventVC = CreateNewEventViewController()
+        createNewEventVC.delegate = delegate
         navigationController?.pushViewController(createNewEventVC, animated: true)
     }
 }

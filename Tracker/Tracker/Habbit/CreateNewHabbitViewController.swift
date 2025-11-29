@@ -1,6 +1,6 @@
 import UIKit
 
-final class CreateNewHabbitViewController: UIViewController {
+final class CreateNewHabitViewController: UIViewController {
     
     // MARK: - Properties
     
@@ -151,7 +151,7 @@ final class CreateNewHabbitViewController: UIViewController {
     private func enableCreateButton() {
         guard let text = nameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
               !text.isEmpty,
-              text.count <= 38,
+              text.count <= Constants.maxNameLength,
               let category = selectedCategory,
               !category.isEmpty,
               !selectedSchedule.isEmpty else {
@@ -199,7 +199,7 @@ final class CreateNewHabbitViewController: UIViewController {
 
 // MARK: - UITableViewDataSource
 
-extension CreateNewHabbitViewController: UITableViewDataSource {
+extension CreateNewHabitViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cellName.count
     }
@@ -231,7 +231,7 @@ extension CreateNewHabbitViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 
-extension CreateNewHabbitViewController: UITableViewDelegate {
+extension CreateNewHabitViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.row {
@@ -253,23 +253,18 @@ extension CreateNewHabbitViewController: UITableViewDelegate {
 
 // MARK: - UITextFieldDelegate
 
-extension CreateNewHabbitViewController: UITextFieldDelegate {
+extension CreateNewHabitViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let currentText = textField.text else { return true }
         let newText = (currentText as NSString).replacingCharacters(in: range, with: string)
-        if newText.count > 38 {
-            cautionLabel.isHidden = false
-            return false
-        } else {
-            cautionLabel.isHidden = true
-            return true
-        }
+        cautionLabel.isHidden = newText.count <= Constants.maxNameLength
+        return newText.count <= Constants.maxNameLength
     }
 }
 
 // MARK: - CategoryViewControllerDelegate
 
-extension CreateNewHabbitViewController: CategoryViewControllerDelegate {
+extension CreateNewHabitViewController: CategoryViewControllerDelegate {
     func didSelectCategory(_ category: String) {
         setSelectedCategory(category)
     }
@@ -277,7 +272,7 @@ extension CreateNewHabbitViewController: CategoryViewControllerDelegate {
 
 // MARK: - ScheduleViewControllerDelegate
 
-extension CreateNewHabbitViewController: ScheduleViewControllerDelegate {
+extension CreateNewHabitViewController: ScheduleViewControllerDelegate {
     func didSelectSchedule(_ selectedDays: Set<Week>) {
         setSelectedSchedule(selectedDays)
     }

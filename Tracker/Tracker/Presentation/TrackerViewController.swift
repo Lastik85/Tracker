@@ -13,6 +13,14 @@ final class TrackerViewController: UIViewController {
     
     // MARK: - UI Elements
     
+    private lazy var addTrackerButton: UIButton = {
+        let button = UIButton()
+        let image = UIImage(resource: .addTracker)
+        button.setImage(image, for: .normal)
+        button.addTarget(self, action: #selector(addTracker), for: .touchUpInside)
+        return button
+    }()
+    
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
@@ -87,8 +95,7 @@ final class TrackerViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(resource: .plus), style: .plain, target: self, action: #selector(addTracker))
-        navigationItem.leftBarButtonItem?.tintColor = .black
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackerButton)
         navigationController?.navigationBar.prefersLargeTitles = true
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = "Поиск"
@@ -129,7 +136,7 @@ final class TrackerViewController: UIViewController {
         )
         let hasTrackers = !visibleCategories.isEmpty
         emptyTrackerStackView.isHidden = hasTrackers
-        filterButton.isHidden = !hasTrackers
+       // filterButton.isHidden = !hasTrackers
         collectionView.reloadData()
     }
     
@@ -280,6 +287,6 @@ extension TrackerViewController: AddNewTrackerDelegate {
         categories = updatedCategories
         updateVisibleCategories()
         
-        print("Создана Привычка: \(tracker.name) в категории: \(categoryTitle)")
+        print("Создано Событие: \(tracker.name) в категории: \(categoryTitle)")
     }
 }

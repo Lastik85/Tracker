@@ -19,7 +19,7 @@ final class CreateNewEventViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.ypRed.cgColor
-        button.addTarget(self, action: #selector(tapCancell), for: .touchUpInside)
+        button.addTarget(self, action: #selector(tapCancel), for: .touchUpInside)
         return button
     }()
     
@@ -125,18 +125,15 @@ final class CreateNewEventViewController: UIViewController {
     
     private func setSelectedCategory(_ category: String) {
         selectedCategory = category
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            let indexPath = IndexPath(row: 0, section: 0)
-            self.tableView.reloadRows(at: [indexPath], with: .automatic)
-        }
+        let indexPath = IndexPath(row: 0, section: 0)
+        tableView.reloadRows(at: [indexPath], with: .automatic)
         enableCreateButton()
     }
     
     private func enableCreateButton() {
         guard let text = nameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
               !text.isEmpty,
-              text.count <= 38,
+              text.count <= Constants.maxNameLength,
               let category = selectedCategory,
               !category.isEmpty else {
             createButton.isEnabled = false
@@ -149,15 +146,29 @@ final class CreateNewEventViewController: UIViewController {
     
     // MARK: - Actions
     
-    @objc private func tapCancell() {
+    @objc private func tapCancel() {
         dismiss(animated: true)
     }
     
     @objc private func tapCreate() {
-        print("создали нерегулярное событие")
+        guard let category = selectedCategory,
+              !trackerName.isEmpty
+        else {
+            return
+        }
+        let everyDaySchedule: Set<Week> = Set(Week.allCases)
+        let newTracker = Tracker(
+            id: UUID(),
+            name: trackerName,
+            color: .colorSelection16,
+            emoji: "🫥",
+            schedule: everyDaySchedule
+        )
+        delegate?.didCreateTracker(newTracker, categoryTitle: category)
+        print("Создали Нерегулярное событие")
         dismiss(animated: true)
     }
-    
+
     @objc private func textFieldDidChange(_ textField: UITextField) {
         trackerName = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         enableCreateButton()
@@ -211,13 +222,8 @@ extension CreateNewEventViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let currentText = textField.text else { return true }
         let newText = (currentText as NSString).replacingCharacters(in: range, with: string)
-        if newText.count > 38 {
-            cautionLabel.isHidden = false
-            return false
-        } else {
-            cautionLabel.isHidden = true
-            return true
-        }
+        cautionLabel.isHidden = newText.count <= Constants.maxNameLength
+        return newText.count <= Constants.maxNameLength
     }
 }
 
