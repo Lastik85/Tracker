@@ -200,7 +200,6 @@ extension CreateNewEventViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-
 extension CreateNewEventViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -217,7 +216,6 @@ extension CreateNewEventViewController: UITableViewDelegate {
 }
 
 // MARK: - UITextFieldDelegate
-
 extension CreateNewEventViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let currentText = textField.text else { return true }
@@ -228,7 +226,6 @@ extension CreateNewEventViewController: UITextFieldDelegate {
 }
 
 // MARK: - CategoryViewControllerDelegate
-
 extension CreateNewEventViewController: CategoryViewControllerDelegate {
     func didSelectCategory(_ category: String) {
         setSelectedCategory(category)
