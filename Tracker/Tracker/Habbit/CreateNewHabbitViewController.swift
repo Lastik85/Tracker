@@ -23,7 +23,6 @@ final class CreateNewHabitViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.ypRed.cgColor
-        button.isEnabled = false
         button.addTarget(self, action: #selector(tapCancel), for: .touchUpInside)
         return button
     }()
