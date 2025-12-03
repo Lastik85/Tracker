@@ -3,12 +3,9 @@ import UIKit
 final class ColorCell: UICollectionViewCell {
     
     // MARK: - Properties
-    
     static let reuseIdentifier = "ColorCell"
     
-    
     // MARK: - UI Elements
-    
     private lazy var colorView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
@@ -21,9 +18,7 @@ final class ColorCell: UICollectionViewCell {
         return view
     }()
     
-    
     // MARK: - Initialization
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -33,10 +28,8 @@ final class ColorCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
+
     // MARK: - Setup
-    
     private func setupViews() {
         [colorView, colorBackgroundView].forEach { contentView.addSubview($0) }
     }
@@ -55,9 +48,7 @@ final class ColorCell: UICollectionViewCell {
         ])
     }
     
-    
     // MARK: - Configuration Methods
-    
     func configureColor(with color: UIColor) {
         colorView.backgroundColor = color
     }
@@ -72,9 +63,7 @@ final class ColorCell: UICollectionViewCell {
         colorBackgroundView.layer.borderColor = .none
     }
     
-    
     // MARK: - Lifecycle
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         colorView.backgroundColor = nil

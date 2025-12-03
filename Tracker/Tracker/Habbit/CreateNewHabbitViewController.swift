@@ -225,14 +225,15 @@ final class CreateNewHabitViewController: UIViewController {
     @objc private func tapCreate() {
         guard let category = selectedCategory,
               !trackerName.isEmpty,
-              !selectedSchedule.isEmpty else {
-            return
-        }
+              !selectedSchedule.isEmpty,
+              let emoji = selectedEmoji,
+              let color = selectedColor
+        else { return }
         let newTracker = Tracker(
             id: UUID(),
             name: trackerName,
-            color: selectedColor ?? .colorSelection3,
-            emoji: selectedEmoji ?? "👀",
+            color: color,
+            emoji: emoji,
             schedule: selectedSchedule
         )
         delegate?.didCreateTracker(newTracker, categoryTitle: category)
