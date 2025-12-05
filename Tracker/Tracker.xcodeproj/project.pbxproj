@@ -6,7 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CBA12D132EE2F04C003BED51 /* TrackerCoreData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA12D112EE2F04C003BED51 /* TrackerCoreData+CoreDataClass.swift */; };
+		CBA12D142EE2F04C003BED51 /* TrackerCoreData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA12D122EE2F04C003BED51 /* TrackerCoreData+CoreDataProperties.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		CBA12D112EE2F04C003BED51 /* TrackerCoreData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCoreData+CoreDataClass.swift"; sourceTree = "<group>"; };
+		CBA12D122EE2F04C003BED51 /* TrackerCoreData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCoreData+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		CBB8B3412ECC8CFF00D6BF8A /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -45,6 +52,8 @@
 		CBB8B3382ECC8CFF00D6BF8A = {
 			isa = PBXGroup;
 			children = (
+				CBA12D112EE2F04C003BED51 /* TrackerCoreData+CoreDataClass.swift */,
+				CBA12D122EE2F04C003BED51 /* TrackerCoreData+CoreDataProperties.swift */,
 				CBB8B3432ECC8CFF00D6BF8A /* Tracker */,
 				CBB8B3422ECC8CFF00D6BF8A /* Products */,
 			);
@@ -132,6 +141,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CBA12D132EE2F04C003BED51 /* TrackerCoreData+CoreDataClass.swift in Sources */,
+				CBA12D142EE2F04C003BED51 /* TrackerCoreData+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

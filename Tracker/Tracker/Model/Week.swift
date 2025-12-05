@@ -1,4 +1,4 @@
-enum Week: String, CaseIterable {
+enum Week: String, CaseIterable, Codable {
     
     case monday = "Понедельник"
     case tuesday = "Вторник"
