@@ -4,8 +4,7 @@ final class CreateNewEventViewController: UIViewController {
     
     // MARK: - Properties
     
-    weak var delegate: AddNewTrackerDelegate?
-    
+    private let trackerService = TrackerService.shared
     private let cellName: [String] = ["Категория"]
     private var emojis: [String] { Constants.emojis }
     private var colors: [UIColor] { Constants.colors }
@@ -215,7 +214,7 @@ final class CreateNewEventViewController: UIViewController {
             emoji: emoji,
             schedule: everyDaySchedule
         )
-        delegate?.didCreateTracker(newTracker, categoryTitle: category)
+        trackerService.createTracker(newTracker, inCategory: category)
         print("Создали Нерегулярное событие")
         dismiss(animated: true)
     }

@@ -3,8 +3,7 @@ import UIKit
 final class CreateNewHabitViewController: UIViewController {
         
     // MARK: - Properties
-    weak var delegate: AddNewTrackerDelegate?
-    
+    private let trackerService = TrackerService.shared
     private let cellName: [String] = ["Категория", "Расписание"]
     private var emojis: [String] { Constants.emojis }
     private var colors: [UIColor] { Constants.colors }
@@ -235,8 +234,8 @@ final class CreateNewHabitViewController: UIViewController {
             emoji: emoji,
             schedule: selectedSchedule
         )
-        delegate?.didCreateTracker(newTracker, categoryTitle: category)
         
+        trackerService.createTracker(newTracker, inCategory: category)
         dismiss(animated: true)
     }
     
