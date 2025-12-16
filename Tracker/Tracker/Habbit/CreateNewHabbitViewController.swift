@@ -115,15 +115,27 @@ final class CreateNewHabitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .ypWhiteDay
+        setupNavigationTitle()
         navigationItem.hidesBackButton = true
+        
         addSubviews()
         setupConstraints()
         enableCreateButton()
     }
     
+    private func setupNavigationTitle() {
+        let label = UILabel()
+        label.text = "Новая привычка"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textColor = .ypBlackDay
+        label.textAlignment = .center
+
+        navigationItem.titleView = label
+    }
+
     // MARK: - Private Methods
     private func addSubviews() {
-        navigationItem.title = "Новая Привычка"
+        
         view.addSubview(buttonStackView)
         [stackTextField, tableView, collectionView].forEach { contentView.addSubview($0) }
         scrollView.addSubview(contentView)
