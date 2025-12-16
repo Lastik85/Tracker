@@ -221,6 +221,7 @@ final class CreateNewEventViewController: UIViewController {
     
     @objc private func textFieldDidChange(_ textField: UITextField) {
         trackerName = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        cautionLabel.isHidden = trackerName.count <= Constants.maxNameLength
         enableCreateButton()
     }
 }
