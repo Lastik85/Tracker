@@ -66,7 +66,6 @@ final class CreateTypeTrackerViewController: UIViewController {
     
     @objc func didTapAnIrregularEventButton() {
         let createNewEventVC = CreateNewEventViewController()
-        //   createNewEventVC.delegate = delegate
         navigationController?.pushViewController(createNewEventVC, animated: true)
     }
 }

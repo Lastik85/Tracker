@@ -82,7 +82,7 @@ final class CreateNewHabitViewController: UIViewController {
         tableView.backgroundColor = .ypBackgroundDay
         tableView.layer.cornerRadius = 16
         tableView.rowHeight = 75
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.separatorStyle = .none
         tableView.isScrollEnabled = false
         tableView.register(SettingsTrackerTableViewCell.self, forCellReuseIdentifier: SettingsTrackerTableViewCell.reuseIdentifier)
         return tableView
@@ -244,6 +244,20 @@ final class CreateNewHabitViewController: UIViewController {
         cautionLabel.isHidden = trackerName.count <= Constants.maxNameLength
         enableCreateButton()
     }
+    private func addSeparator(to cell: UITableViewCell) {
+        let separator = UIView()
+        separator.backgroundColor = .ypGray
+        cell.contentView.addSubview(separator)
+        
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            separator.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 16),
+            separator.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -16),
+            separator.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor),
+            separator.heightAnchor.constraint(equalToConstant: 0.5)
+        ])
+    }
+    
 }
 
 // MARK: - UITableViewDataSource
@@ -270,6 +284,11 @@ extension CreateNewHabitViewController: UITableViewDataSource {
         } else {
             subtitle = nil
         }
+        cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        if indexPath.row < cellName.count - 1 {
+            addSeparator(to: cell)
+        }
+        
         
         cell.configure(with: title, subtitle: subtitle)
         
@@ -296,6 +315,7 @@ extension CreateNewHabitViewController: UITableViewDelegate {
             break
         }
     }
+
 }
 
 // MARK: - UITextFieldDelegate

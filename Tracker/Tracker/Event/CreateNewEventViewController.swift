@@ -82,7 +82,7 @@ final class CreateNewEventViewController: UIViewController {
         tableView.backgroundColor = .ypBackgroundDay
         tableView.layer.cornerRadius = 16
         tableView.rowHeight = 75
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.separatorStyle = .none
         tableView.isScrollEnabled = false
         tableView.register(SettingsTrackerTableViewCell.self, forCellReuseIdentifier: SettingsTrackerTableViewCell.reuseIdentifier)
         return tableView
