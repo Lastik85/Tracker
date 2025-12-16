@@ -79,7 +79,6 @@ final class CreateNewHabitViewController: UIViewController {
         let tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.backgroundColor = .ypBackgroundDay
         tableView.layer.cornerRadius = 16
         tableView.rowHeight = 75
         tableView.isScrollEnabled = false
