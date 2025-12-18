@@ -116,6 +116,7 @@ final class CreateNewEventViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .ypWhiteDay
+        setupNavigationTitle("Новое нерегулярное событие")
         navigationItem.hidesBackButton = true
         addSubviews()
         setupConstraints()
@@ -123,8 +124,8 @@ final class CreateNewEventViewController: UIViewController {
     }
     
     // MARK: - Private Methods
+
     private func addSubviews() {
-        navigationItem.title = "Новое нерегулярное событие"
         view.addSubview(buttonStackView)
         [stackTextField, tableView, collectionView].forEach { contentView.addSubview($0) }
         scrollView.addSubview(contentView)

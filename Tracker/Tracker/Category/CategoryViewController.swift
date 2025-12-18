@@ -38,13 +38,13 @@ final class CategoryViewController: UIViewController {
         view.backgroundColor = .ypWhiteDay
         addSubviews()
         setupConstraints()
+        setupNavigationTitle("Категория")
         navigationItem.hidesBackButton = true
     }
     
     // MARK: - Private Methods
-    
+
     private func addSubviews() {
-        navigationItem.title = "Категория"
         [tableView, createButton].forEach { view.addSubview($0) }
     }
     

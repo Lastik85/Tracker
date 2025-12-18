@@ -39,7 +39,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        navigationItem.title = "Создать трекер"
+        setupNavigationTitle("Создать трекер")
         view.addSubview(stackView)
         setupConstraints()
     }
