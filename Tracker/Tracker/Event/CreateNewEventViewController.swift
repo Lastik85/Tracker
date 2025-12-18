@@ -6,8 +6,6 @@ final class CreateNewEventViewController: UIViewController {
     
     private let trackerService = TrackerService.shared
     private let cellName: [String] = ["Категория"]
-    private var emojis: [String] { Constants.emojis }
-    private var colors: [UIColor] { Constants.colors }
     private var selectedCategory: String?
     private var trackerName: String = ""
     private var selectedEmoji: String?
@@ -124,7 +122,7 @@ final class CreateNewEventViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-
+    
     private func addSubviews() {
         view.addSubview(buttonStackView)
         [stackTextField, tableView, collectionView].forEach { contentView.addSubview($0) }
@@ -285,63 +283,49 @@ extension CreateNewEventViewController: CategoryViewControllerDelegate {
 // MARK: - UICollectionViewDataSource
 extension CreateNewEventViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
+        return EmojiColorCollectionSection.allCases.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            return emojis.count
-        case 1:
-            return colors.count
-        default:
+        
+        guard let section = EmojiColorCollectionSection(rawValue: section) else {
             return 0
+        }
+        return section.numberOfItems
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        guard let section = EmojiColorCollectionSection(rawValue: indexPath.section) else {
+            return UICollectionViewCell()
+        }
+        
+        switch section {
+        case .emoji:
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "EmojiCell",
+                for: indexPath
+            ) as! EmojiCell
+            
+            let emoji = Constants.emojis[indexPath.item]
+            cell.emojiConfigure(with: emoji)
+            selectedEmoji == emoji ? cell.selectEmoji() : cell.deselectEmoji()
+            return cell
+            
+        case .color:
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "ColorCell",
+                for: indexPath
+            ) as! ColorCell
+            
+            let color = Constants.colors[indexPath.item]
+            cell.configureColor(with: color)
+            selectedColor == color ? cell.selectedColor(with: color) : cell.deselectedColor()
+            return cell
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch indexPath.section {
-        case 0:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: "EmojiCell",
-                for: indexPath
-            ) as? EmojiCell else {
-                return UICollectionViewCell()
-            }
-            
-            let emoji = emojis[indexPath.item]
-            cell.emojiConfigure(with: emoji)
-            
-            if let selectedEmoji = selectedEmoji, emoji == selectedEmoji {
-                cell.selectEmoji()
-            } else {
-                cell.deselectEmoji()
-            }
-            
-            return cell
-            
-        case 1:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: "ColorCell",
-                for: indexPath
-            ) as? ColorCell else {
-                return UICollectionViewCell()
-            }
-            let color = colors[indexPath.item]
-            cell.configureColor(with: color)
-            
-            if let selectedColor = selectedColor, color == selectedColor {
-                cell.selectedColor(with: color)
-            } else {
-                cell.deselectedColor()
-            }
-            
-            return cell
-            
-        default:
-            return UICollectionViewCell()
-        }
-    }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let header = collectionView.dequeueReusableSupplementaryView(
@@ -351,8 +335,8 @@ extension CreateNewEventViewController: UICollectionViewDataSource {
         ) as? EmojiColorHeader else {
             return UICollectionReusableView()
         }
-        let title = indexPath.section == 0 ? "Emoji" : "Цвет"
-        header.configureHeader(with: title)
+        let section = EmojiColorCollectionSection(rawValue: indexPath.section)
+        header.configureHeader(with: section?.title ?? "")
         
         return header
     }
@@ -386,31 +370,27 @@ extension CreateNewEventViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - UICollectionViewDelegate
 extension CreateNewEventViewController: UICollectionViewDelegate {
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        switch indexPath.section {
-        case 0:
-            let emoji = emojis[indexPath.item]
-            if selectedEmoji == emoji {
-                selectedEmoji = nil
-            } else {
-                selectedEmoji = emoji
-            }
-            UIView.performWithoutAnimation {
-                collectionView.reloadSections(IndexSet(integer: indexPath.section))
-            }
-        case 1:
-            let color = colors[indexPath.item]
-            if selectedColor == color {
-                selectedColor = nil
-            } else {
-                selectedColor = color
-            }
-            UIView.performWithoutAnimation {
-                collectionView.reloadSections(IndexSet(integer: indexPath.section))
-            }
-        default:
-            break
+        
+        guard let section = EmojiColorCollectionSection(rawValue: indexPath.section) else {
+            return
+        }
+        
+        switch section {
+        case .emoji:
+            let emoji = Constants.emojis[indexPath.item]
+            selectedEmoji = selectedEmoji == emoji ? nil : emoji
+            
+        case .color:
+            let color = Constants.colors[indexPath.item]
+            selectedColor = selectedColor == color ? nil : color
+        }
+        
+        UIView.performWithoutAnimation {
+            collectionView.reloadSections(IndexSet(integer: indexPath.section))
         }
         enableCreateButton()
     }
 }
+
