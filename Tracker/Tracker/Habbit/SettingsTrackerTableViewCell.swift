@@ -49,6 +49,7 @@ final class SettingsTrackerTableViewCell: UITableViewCell {
         titleLabel.text = title
         subtitleLabel.text = subtitle
         subtitleLabel.isHidden = subtitle == nil || subtitle?.isEmpty == true
+        backgroundColor = UIColor(resource: .ypBackgroundDay)
         accessoryType = .disclosureIndicator
         tintColor = .ypGray
     }

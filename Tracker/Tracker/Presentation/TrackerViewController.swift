@@ -4,12 +4,10 @@ final class TrackerViewController: UIViewController {
     
     // MARK: - Properties
     
-    private var categories: [TrackerCategory] = []
-    private var completedTrackers: [TrackerRecord] = []
+    private let trackerService = TrackerService.shared
+    
     private var visibleCategories: [TrackerCategory] = []
     private var currentDate = Date()
-    
-    private let filterService = TrackerFilterService()
     
     // MARK: - UI Elements
     
@@ -83,6 +81,7 @@ final class TrackerViewController: UIViewController {
         setupUI()
         setupConstraints()
         setupNavigationBar()
+        trackerService.delegate = self
         updateVisibleCategories()
     }
     
@@ -128,39 +127,28 @@ final class TrackerViewController: UIViewController {
     }
     
     private func updateVisibleCategories() {
-        let calendar = Calendar.current
-        let selectedWeekday = calendar.component(.weekday, from: currentDate)
-        visibleCategories = filterService.filterVisibleCategories(
-            categories: categories,
-            selectedWeekday: selectedWeekday
-        )
-        let hasTrackers = !visibleCategories.isEmpty
-        emptyTrackerStackView.isHidden = hasTrackers
-       // filterButton.isHidden = !hasTrackers
+        visibleCategories = trackerService.fetchTrackerForDate(for: currentDate)
+        emptyTrackerStackView.isHidden = !visibleCategories.isEmpty
         collectionView.reloadData()
+        
     }
     
-    private func completeTracker(_ tracker: Tracker, isCompleted: Bool) {
-        guard filterService.canCompleteTracker(on: currentDate) else {
+    private var pendingReloadIndexPath: IndexPath?
+    
+    private func completeTracker(
+        _ tracker: Tracker,
+        isCompleted: Bool,
+        at indexPath: IndexPath
+    ) {
+        guard trackerService.canCompletedTracker(on: currentDate) else {
             showFutureDateAlert()
             return
         }
-        let calendar = Calendar.current
-        if isCompleted {
-            let record = TrackerRecord(trackerId: tracker.id, date: currentDate)
-            if !completedTrackers.contains(where: {
-                $0.trackerId == tracker.id && calendar.isDate($0.date, inSameDayAs: currentDate)
-            }) {
-                completedTrackers.append(record)
-            }
-        } else {
-            completedTrackers.removeAll {
-                $0.trackerId == tracker.id && calendar.isDate($0.date, inSameDayAs: currentDate)
-            }
-        }
         
-        collectionView.reloadData()
+        pendingReloadIndexPath = indexPath
+        trackerService.toggleCompletion(for: tracker, on: currentDate)
     }
+    
     
     private func showFutureDateAlert() {
         let alert = UIAlertController(
@@ -186,7 +174,6 @@ final class TrackerViewController: UIViewController {
     
     @objc private func addTracker() {
         let createTypeVC = CreateTypeTrackerViewController()
-        createTypeVC.delegate = self
         let navController = UINavigationController(rootViewController: createTypeVC)
         present(navController, animated: true)
     }
@@ -204,21 +191,21 @@ extension TrackerViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: TrackerCell.reuseIdentifier,
-            for: indexPath
-        ) as? TrackerCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath ) as? TrackerCell else {
             return UICollectionViewCell()
         }
         
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
-        let completedDays = filterService.getCompletedDaysCount(for: tracker, completedTrackers: completedTrackers)
-        let isCompletedToday = filterService.isTrackerCompletedToday(tracker, completedTrackers: completedTrackers, currentDate: currentDate)
+        let completedDays = trackerService.getCompletedDaysCount(for: tracker)
+        let isCompletedToday = trackerService.isTrackerCompleted(tracker, on: currentDate)
         
         cell.configure(with: tracker, completedDays: completedDays, isCompletedToday: isCompletedToday)
-        
         cell.onComplete = { [weak self] tracker, isCompleted in
-            self?.completeTracker(tracker, isCompleted: isCompleted)
+            self?.completeTracker(
+                tracker,
+                isCompleted: isCompleted,
+                at: indexPath
+            )
         }
         
         return cell
@@ -267,26 +254,15 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// MARK: - AddNewTrackerDelegate
-
-extension TrackerViewController: AddNewTrackerDelegate {
-    func didCreateTracker(_ tracker: Tracker, categoryTitle: String) {
-        var updatedCategories = categories
-        if let index = updatedCategories.firstIndex(where: { $0.title == categoryTitle }) {
-            let existingCategory = updatedCategories[index]
-            let updatedTrackers = existingCategory.trackers + [tracker]
-            let updatedCategory = TrackerCategory(
-                title: existingCategory.title,
-                trackers: updatedTrackers
-            )
-            updatedCategories[index] = updatedCategory
+extension TrackerViewController: TrackerServiceDelegate {
+    func trackersDidUpdate() {
+        if let indexPath = pendingReloadIndexPath {
+            pendingReloadIndexPath = nil
+            collectionView.reloadItems(at: [indexPath])
         } else {
-            let newCategory = TrackerCategory(title: categoryTitle, trackers: [tracker])
-            updatedCategories.append(newCategory)
+            updateVisibleCategories()
         }
-        categories = updatedCategories
-        updateVisibleCategories()
-        
-        print("Создано Событие: \(tracker.name) в категории: \(categoryTitle)")
     }
+    
 }
+

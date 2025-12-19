@@ -39,15 +39,15 @@ final class ScheduleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhiteDay
+        setupNavigationTitle("Расписание")
         navigationItem.hidesBackButton = true
         addSubviews()
         setupConstraints()
     }
     
     // MARK: - Private Methods
-    
+
     private func addSubviews() {
-        navigationItem.title = "Расписание"
         [tableView, doneButton].forEach { view.addSubview($0) }
     }
     

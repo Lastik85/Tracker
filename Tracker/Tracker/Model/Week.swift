@@ -1,4 +1,4 @@
-enum Week: String, CaseIterable {
+enum Week: String, CaseIterable, Codable {
     
     case monday = "Понедельник"
     case tuesday = "Вторник"
@@ -19,7 +19,7 @@ enum Week: String, CaseIterable {
         case .sunday: return "Вс"
         }
     }
-    var сalendarDay: Int {
+    var calendarDay: Int {
         switch self{
         case .monday: return 2
         case .tuesday: return 3
@@ -39,4 +39,27 @@ extension Week: Comparable {
         }
         return lhsIndex < rhsIndex
     }
+    
+    static func decode(from encoded: Int64) -> Set<Week> {
+        var result = Set<Week>()
+        for (index, day) in Week.allCases.enumerated() {
+            if (encoded & (1 << index)) != 0 {
+                result.insert(day)
+            }
+        }
+        return result
+    }
+    
+    static func encode(_ set: Set<Week>) -> Int64 {
+        var result: Int64 = 0
+        for (index, day) in Week.allCases.enumerated() {
+            if set.contains(day) {
+                result |= (1 << index)
+            }
+        }
+        return result
+    }
+    
+    
 }
+

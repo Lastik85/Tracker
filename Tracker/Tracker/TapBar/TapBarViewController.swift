@@ -5,6 +5,7 @@ final class TapBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad( )
         setupViewControllers()
+        setupTabBarAppearance()
     }
     
     private func setupViewControllers() {
@@ -31,5 +32,15 @@ final class TapBarViewController: UITabBarController {
         viewControllers = [navigationTracker, navigationStatistics]
     }
     
-    
+    private func setupTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .ypWhiteDay
+        appearance.shadowColor = .ypGray
+        tabBar.standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            tabBar.scrollEdgeAppearance = appearance
+        }
+    }
+
 }

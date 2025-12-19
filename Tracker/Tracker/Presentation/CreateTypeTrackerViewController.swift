@@ -2,10 +2,6 @@ import UIKit
 
 final class CreateTypeTrackerViewController: UIViewController {
     
-    // MARK: - Properties
-    
-    weak var delegate: AddNewTrackerDelegate?
-    
     // MARK: - UI Elements
     
     private lazy var habitButton: UIButton = {
@@ -43,7 +39,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        navigationItem.title = "Создать трекер"
+        setupNavigationTitle("Создать трекер")
         view.addSubview(stackView)
         setupConstraints()
     }
@@ -65,13 +61,11 @@ final class CreateTypeTrackerViewController: UIViewController {
     
     @objc func didTapHabitButton() {
         let createNewHabitVC = CreateNewHabitViewController()
-        createNewHabitVC.delegate = delegate
         navigationController?.pushViewController(createNewHabitVC, animated: true)
     }
     
     @objc func didTapAnIrregularEventButton() {
         let createNewEventVC = CreateNewEventViewController()
-        createNewEventVC.delegate = delegate
         navigationController?.pushViewController(createNewEventVC, animated: true)
     }
 }
