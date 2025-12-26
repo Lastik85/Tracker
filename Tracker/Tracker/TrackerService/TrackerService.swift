@@ -8,12 +8,21 @@ final class TrackerService {
     weak var delegate: TrackerServiceDelegate?
     
     private let trackerCore = TrackerStore.shared
-    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerCategoryStore = TrackerCategoryStore.shared
     private let trackerRecordStore = TrackerRecordStore()
     private let calendar = Calendar.current
     
     // MARK: - Tracker Management
-   
+    
+    func addCategory(_ category: TrackerCategory) {
+        trackerCategoryStore.addCategory(category)
+    }
+    
+    func fetchCategories() -> [TrackerCategory] {
+        trackerCategoryStore.fetchCategories()
+    }
+    
+    
     func createTracker(_ tracker: Tracker, inCategory categoryTitle: String) {
         let categories = trackerCategoryStore.fetchCategories()
         let categoryExists = categories.contains { $0.title == categoryTitle }

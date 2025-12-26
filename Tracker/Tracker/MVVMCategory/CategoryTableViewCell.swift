@@ -31,7 +31,6 @@ final class CategoryTableViewCell: UITableViewCell {
         titleLabel.text = title
         accessoryType = isSelected ? .checkmark : .none
         backgroundColor = .ypBackgroundDay
-        layer.cornerRadius = 16
         layer.masksToBounds = true
         selectionStyle = .none
     }

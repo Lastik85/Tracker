@@ -9,27 +9,3 @@ enum Constants{
     static let colors: [UIColor] = [.colorSelection1, .colorSelection2, .colorSelection3, .colorSelection4, .colorSelection5, .colorSelection6, .colorSelection7, .colorSelection8, .colorSelection9, .colorSelection10, .colorSelection11, .colorSelection12, .colorSelection13, .colorSelection14, .colorSelection15, .colorSelection16, .colorSelection17, .colorSelection18]
     
 }
-
-enum EmojiColorCollectionSection: Int, CaseIterable {
-    case emoji
-    case color
-
-    var title: String {
-        switch self {
-        case .emoji:
-            return "Emoji"
-        case .color:
-            return "Цвет"
-        }
-    }
-
-    var numberOfItems: Int {
-        switch self {
-        case .emoji:
-            return Constants.emojis.count
-        case .color:
-            return Constants.colors.count
-        }
-    }
-}
-

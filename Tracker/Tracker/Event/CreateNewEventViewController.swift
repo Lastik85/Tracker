@@ -254,7 +254,8 @@ extension CreateNewEventViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.row {
         case 0:
-            let categoryVC = CategoryViewController()
+            let viewModel = CategoryViewModel()
+            let categoryVC = CategoryListViewController(viewModel: viewModel)
             categoryVC.delegate = self
             categoryVC.selectedCategory = selectedCategory
             navigationController?.pushViewController(categoryVC, animated: true)
@@ -275,7 +276,7 @@ extension CreateNewEventViewController: UITextFieldDelegate {
 }
 
 // MARK: - CategoryViewControllerDelegate
-extension CreateNewEventViewController: CategoryViewControllerDelegate {
+extension CreateNewEventViewController: CategoryListViewControllerDelegate {
     func didSelectCategory(_ category: String) {
         setSelectedCategory(category)
     }
