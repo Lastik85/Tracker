@@ -1,10 +1,3 @@
-//
-//  UserDefaultsService.swift
-//  Tracker
-//
-//  Created by Андрей Пермяков on 22.12.2025.
-//
-
 import Foundation
 
 final class UserDefaultsService {
@@ -13,19 +6,19 @@ final class UserDefaultsService {
 
     private let storage = UserDefaults.standard
 
-    private enum Keys {
-        static let hasSeenOnboarding = "hasSeenOnboarding"
-    }
-
     private init() {}
 
     var hasSeenOnboarding: Bool {
         get {
-            storage.bool(forKey: Keys.hasSeenOnboarding)
+            storage.bool(forKey: UserDefaultsKeys.hasSeenOnboarding)
         }
         set {
-            storage.set(newValue, forKey: Keys.hasSeenOnboarding)
+            storage.set(newValue, forKey: UserDefaultsKeys.hasSeenOnboarding)
         }
     }
 }
 
+enum UserDefaultsKeys {
+    static let onboardingCompleted = "OnboardingCompleted"
+    static let hasSeenOnboarding = "hasSeenOnboarding"
+}

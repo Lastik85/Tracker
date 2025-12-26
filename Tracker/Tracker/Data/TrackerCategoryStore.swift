@@ -4,6 +4,7 @@ import UIKit
 final class TrackerCategoryStore: NSObject {
     
     // MARK: - Properties
+    static let shared = TrackerCategoryStore()
     
     private let context: NSManagedObjectContext
     private let trackerStore = TrackerStore.shared
@@ -41,7 +42,10 @@ final class TrackerCategoryStore: NSObject {
         trackerCategory.title = category.title
         trackerCategory.trackers = []
         TrackerDataService.shared.saveContext()
+        
+        try? fetchedResultsController.performFetch()
     }
+    
     func addTrackerToCategory(_ tracker: Tracker, category title: String) {
         let newTracker = trackerStore.addTracker(tracker)
         try? fetchedResultsController.performFetch()

@@ -7,7 +7,7 @@ final class AppNavigationService {
     private let defaults = UserDefaults.standard
     private weak var window: UIWindow?
 
-    private let onboardingKey = "OnboardingCompleted"
+    private let onboardingKey = UserDefaultsKeys.onboardingCompleted
 
     private init() {}
 

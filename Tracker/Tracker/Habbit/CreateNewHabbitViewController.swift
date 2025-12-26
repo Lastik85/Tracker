@@ -287,7 +287,8 @@ extension CreateNewHabitViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.row {
         case 0:
-            let categoryVC = CategoryViewController()
+            let viewModel = CategoryViewModel()
+            let categoryVC = CategoryListViewController(viewModel: viewModel)
             categoryVC.delegate = self
             categoryVC.selectedCategory = selectedCategory
             navigationController?.pushViewController(categoryVC, animated: true)
@@ -314,7 +315,7 @@ extension CreateNewHabitViewController: UITextFieldDelegate {
 }
 
 // MARK: - CategoryViewControllerDelegate
-extension CreateNewHabitViewController: CategoryViewControllerDelegate {
+extension CreateNewHabitViewController: CategoryListViewControllerDelegate {
     func didSelectCategory(_ category: String) {
         setSelectedCategory(category)
     }
