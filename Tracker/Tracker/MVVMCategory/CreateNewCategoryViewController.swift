@@ -2,8 +2,12 @@ import UIKit
 
 final class CreateNewCategoryViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private let trackerService = TrackerService.shared
     weak var delegate: CreateNewCategoryViewControllerDelegate?
+    
+    // MARK: - UI Elements
     
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
@@ -30,6 +34,8 @@ final class CreateNewCategoryViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -40,25 +46,29 @@ final class CreateNewCategoryViewController: UIViewController {
         setupConstraints()
     }
     
+    // MARK: - Setup Methods
+    
     private func addSubviews() {
         [nameTextField, createButton].forEach { view.addSubview($0) }
     }
     
-    private func setupConstraints(){
+    private func setupConstraints() {
         [nameTextField, createButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
         NSLayoutConstraint.activate([
-        nameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-        nameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-        nameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-        nameTextField.heightAnchor.constraint(equalToConstant: 75),
-        
-        createButton.heightAnchor.constraint(equalToConstant: 60),
-        createButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-        createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-        createButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+            nameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            nameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            nameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            nameTextField.heightAnchor.constraint(equalToConstant: 75),
+            
+            createButton.heightAnchor.constraint(equalToConstant: 60),
+            createButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            createButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
     }
+    
+    // MARK: - Private Methods
     
     private func enableCreateButton() {
         guard let text = nameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -72,7 +82,9 @@ final class CreateNewCategoryViewController: UIViewController {
         createButton.backgroundColor = .ypBlackDay
     }
     
-    @objc func textFieldDidChange(){
+    // MARK: - Actions
+    
+    @objc private func textFieldDidChange() {
         enableCreateButton()
     }
     
@@ -88,8 +100,9 @@ final class CreateNewCategoryViewController: UIViewController {
         delegate?.didCreateCategory()
         navigationController?.popViewController(animated: true)
     }
-
 }
+
+// MARK: - UITextFieldDelegate
 
 extension CreateNewCategoryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -97,4 +110,3 @@ extension CreateNewCategoryViewController: UITextFieldDelegate {
         return true
     }
 }
-

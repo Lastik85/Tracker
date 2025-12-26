@@ -43,8 +43,8 @@ final class CategoryListViewController: UIViewController {
         tableView.dataSource = self
         tableView.rowHeight = 75
         tableView.layer.cornerRadius = 16
-        tableView.separatorStyle = .none
         tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.reuseIdentifier)
+        tableView.separatorStyle = .singleLine
         return tableView
     }()
     
@@ -59,8 +59,10 @@ final class CategoryListViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Initialization
+    
     init(viewModel: CategoryViewModel) {
-        self.viewModel = viewModel 
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -168,10 +170,18 @@ extension CategoryListViewController: UITableViewDelegate {
         delegate?.didSelectCategory(categoryTitle)
         navigationController?.popViewController(animated: true)
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == viewModel.categories.count - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        }
+    }
 }
 
 extension CategoryListViewController: CreateNewCategoryViewControllerDelegate {
-
+    
     func didCreateCategory() {
         viewModel.fetchCategories()
     }

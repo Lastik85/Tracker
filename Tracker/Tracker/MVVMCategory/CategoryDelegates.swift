@@ -1,3 +1,5 @@
+import Foundation
+
 protocol CategoryListViewControllerDelegate: AnyObject {
     func didSelectCategory(_ categoryTitle: String)
 }
