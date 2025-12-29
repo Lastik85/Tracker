@@ -4,7 +4,7 @@ final class AppNavigationService {
 
     static let shared = AppNavigationService()
 
-    private let defaults = UserDefaults.standard
+    private let userDefaultsService = UserDefaultsService.shared
     private weak var window: UIWindow?
 
     private let onboardingKey = UserDefaultsKeys.onboardingCompleted
@@ -14,7 +14,7 @@ final class AppNavigationService {
     func start(window: UIWindow) -> UIViewController {
         self.window = window
 
-        if defaults.bool(forKey: onboardingKey) {
+        if userDefaultsService.hasSeenOnboarding {
             return TapBarViewController()
         }
 
@@ -28,7 +28,7 @@ final class AppNavigationService {
     }
 
     private func finishOnboarding() {
-        defaults.set(true, forKey: onboardingKey)
+        userDefaultsService.hasSeenOnboarding = true
 
         window?.rootViewController = TapBarViewController()
         window?.makeKeyAndVisible()

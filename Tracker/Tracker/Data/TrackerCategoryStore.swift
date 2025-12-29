@@ -25,13 +25,9 @@ final class TrackerCategoryStore: NSObject {
     }()
     
     // MARK: - Initializers
-    
-    convenience override init() {
-        self.init(context: TrackerDataService.shared.context)
-    }
-    
-    init(context: NSManagedObjectContext) {
-        self.context = context
+
+    private override init() {
+        self.context = TrackerDataService.shared.context
         super.init()
     }
     

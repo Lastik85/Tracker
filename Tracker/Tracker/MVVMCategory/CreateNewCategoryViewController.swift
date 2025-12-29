@@ -28,7 +28,6 @@ final class CreateNewCategoryViewController: UIViewController {
         let button = UIButton()
         button.setTitle("Готово", for: .normal)
         button.setTitleColor(.white, for: .normal)
-//        button.backgroundColor = .ypGray
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(tapCreateButton), for: .touchUpInside)
         return button
