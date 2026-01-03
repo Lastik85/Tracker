@@ -1,10 +1,3 @@
-//
-//  Nav.swift
-//  Tracker
-//
-//  Created by Андрей Пермяков on 18.12.2025.
-//
-
 import UIKit
 
 extension UIViewController {

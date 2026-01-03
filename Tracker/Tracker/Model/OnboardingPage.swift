@@ -1,9 +1,3 @@
-//
-//  OnboardingPage.swift
-//  Tracker
-//
-//  Created by Андрей Пермяков on 21.12.2025.
-//
 import UIKit
 
 enum OnboardingPage: CaseIterable {
