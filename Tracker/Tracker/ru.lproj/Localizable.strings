@@ -1,0 +1,28 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Андрей Пермяков on 03.01.2026.
+  
+*/
+
+//Onboarding
+"actionButton" = "Вот это технологии!";
+"first" = "Отслеживайте только то, что хотите";
+"second" = "Даже если это не литры воды и йога";
+
+//TapBar
+"trackersTitle" = "Трекеры";
+"statisticsTitle" = "Статистика";
+
+//TrackerVC
+"searchPlaceholderTitle" = "поиск";
+"emptyTrackersLabel" = "Что будем отслеживать?";
+"filterButtonTitle" = "filters";
+"FutureDateAlertTitle" = "Нельзя отметить будущие даты";
+"FutureDateAlertMessage" = "Вы можете отмечать трекеры только за прошедшие и текущие даты";
+
+//TypeTrackerVC
+"habitButton" = "Привычка";
+"eventButton" = "Нерегулярное событие";
+"NavTitle" = "Создать трекер";

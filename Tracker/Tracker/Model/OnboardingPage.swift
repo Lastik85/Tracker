@@ -7,9 +7,9 @@ enum OnboardingPage: CaseIterable {
     var title: String {
         switch self {
         case .first:
-            return "Отслеживайте только то, что хотите"
+            return NSLocalizedString("first", comment: "text for first onboarding page")
         case .second:
-            return "Даже если это не литры воды и йога"
+            return NSLocalizedString("second", comment: "text for second onboarding page")
         }
     }
     

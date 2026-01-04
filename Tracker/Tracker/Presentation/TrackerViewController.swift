@@ -49,7 +49,7 @@ final class TrackerViewController: UIViewController {
     
     private lazy var emptyTrackerLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("emptyTrackersLabel", comment: "ememptyTrackersLabel text")
         label.textAlignment = .center
         return label
     }()
@@ -64,9 +64,10 @@ final class TrackerViewController: UIViewController {
     
     private lazy var filterButton: UIButton = {
         let button = UIButton(type: .system)
+        let title = NSLocalizedString("filterButtonTitle", comment: "filterTitle text")
         button.backgroundColor = .ypBlue
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        button.setTitle("Фильтры", for: .normal)
+        button.setTitle(title, for: .normal)
         button.setTitleColor(.ypWhiteDay, for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
@@ -97,7 +98,7 @@ final class TrackerViewController: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackerButton)
         navigationController?.navigationBar.prefersLargeTitles = true
         let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchBar.placeholder = "Поиск"
+        searchController.searchBar.placeholder = NSLocalizedString("searchPlaceholderTitle", comment: "search text")
         navigationItem.searchController = searchController
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
@@ -152,8 +153,8 @@ final class TrackerViewController: UIViewController {
     
     private func showFutureDateAlert() {
         let alert = UIAlertController(
-            title: "Нельзя отметить будущие даты",
-            message: "Вы можете отмечать трекеры только за прошедшие и текущие даты",
+            title: NSLocalizedString("FutureDateAlertTitle", comment: "title text"),
+            message: NSLocalizedString("FutureDateAlertMessage", comment: "message text"),
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "OK", style: .default))

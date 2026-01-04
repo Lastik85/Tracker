@@ -1,0 +1,28 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Андрей Пермяков on 03.01.2026.
+  
+*/
+
+//Onboarding
+"actionButton" = "Now that's technology!";
+"first" = "Track only what you want";
+"second" = "Even if it's not liters of water and yoga";
+
+//TapBar
+"trackersTitle" = "Trackers";
+"statisticsTitle" = "Statistics";
+
+//TrackerVC
+"searchPlaceholderTitle" = "search";
+"emptyTrackersLabel" = "What are we going to track?";
+"filterButtonTitle" = "filters";
+"FutureDateAlertTitle" = "Future dates cannot be marked";
+"FutureDateAlertMessage" = "You can mark trackers only for past and current dates";
+
+//TypeTrackerVC
+"habitButton" = "Habit";
+"eventButton" = "An irregular event";
+"NavTitle" = "Create a tracker";

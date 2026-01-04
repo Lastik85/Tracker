@@ -134,22 +134,6 @@ final class TrackerCell: UICollectionViewCell {
         completeButton.alpha = buttonAlpha
     }
     
-    private func getDayString(_ value: Int) -> String {
-        let mod10 = value % 10
-        let mod100 = value % 100
-        
-        switch (mod100, mod10) {
-        case (11...14, _):
-            return "\(value) дней"
-        case (_, 1):
-            return "\(value) день"
-        case (_, 2...4):
-            return "\(value) дня"
-        default:
-            return "\(value) дней"
-        }
-    }
-    
     // MARK: - Actions
     
     @objc private func completeButtonTapped() {
@@ -171,7 +155,7 @@ final class TrackerCell: UICollectionViewCell {
         cardView.backgroundColor = tracker.color
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
-        daysCountLabel.text = getDayString(completedDays)
+        daysCountLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "Text for number of days"), completedDays)
         
         updateCompleteButton()
     }
