@@ -28,7 +28,7 @@ final class OnboardingViewController: UIViewController {
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlackDay
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.ypWhiteDay, for: .normal)
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         return button

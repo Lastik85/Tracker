@@ -33,7 +33,7 @@ final class TrackerCell: UICollectionViewCell {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .white
+        label.textColor = .ypWhiteDay
         label.numberOfLines = 2
         return label
     }()
@@ -60,7 +60,7 @@ final class TrackerCell: UICollectionViewCell {
         stackView.alignment = .center
         stackView.layoutMargins = UIEdgeInsets(top: 8, left: 12, bottom: 16, right: 12)
         stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.backgroundColor = .white
+        stackView.backgroundColor = .ypWhiteDay
         return stackView
     }()
     

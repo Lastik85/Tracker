@@ -13,8 +13,9 @@ final class TrackerViewController: UIViewController {
     
     private lazy var addTrackerButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(resource: .addTracker)
+        let image = UIImage(resource: .addTracker).withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
+        button.tintColor = .ypBlackDay
         button.addTarget(self, action: #selector(addTracker), for: .touchUpInside)
         return button
     }()

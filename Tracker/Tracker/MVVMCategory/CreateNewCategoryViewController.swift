@@ -27,7 +27,7 @@ final class CreateNewCategoryViewController: UIViewController {
     private lazy var createButton: UIButton = {
         let button = UIButton()
         button.setTitle("Готово", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.ypWhiteDay, for: .normal)
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(tapCreateButton), for: .touchUpInside)
         return button
@@ -37,7 +37,7 @@ final class CreateNewCategoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhiteDay
         setupNavigationTitle("Новая категория")
         navigationItem.hidesBackButton = true
         addSubviews()

@@ -12,7 +12,7 @@ final class CreateTypeTrackerViewController: UIViewController {
         let title = NSLocalizedString("habitButton", comment: "habit")
         button.setTitle(title, for: .normal)
         button.layer.cornerRadius = 16
-        button.tintColor = .white
+        button.tintColor = .ypWhiteDay
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(didTapHabitButton), for: .touchUpInside)
         return button
@@ -24,7 +24,7 @@ final class CreateTypeTrackerViewController: UIViewController {
         let title = NSLocalizedString("eventButton", comment: "event")
         button.setTitle(title, for: .normal)
         button.layer.cornerRadius = 16
-        button.tintColor = .white
+        button.tintColor = .ypWhiteDay
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(didTapAnIrregularEventButton), for: .touchUpInside)
         return button
@@ -42,7 +42,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhiteDay
         setupNavigationTitle(navTitle)
         view.addSubview(stackView)
         setupConstraints()

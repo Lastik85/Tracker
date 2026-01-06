@@ -27,7 +27,7 @@ final class CreateNewEventViewController: UIViewController {
     private lazy var createButton: UIButton = {
         let button = UIButton()
         button.setTitle("Создать", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.ypWhiteDay, for: .normal)
         button.backgroundColor = .ypGray
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(tapCreate), for: .touchUpInside)
