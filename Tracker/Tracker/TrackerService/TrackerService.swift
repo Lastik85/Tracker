@@ -35,7 +35,7 @@ final class TrackerService {
 
         delegate?.trackersDidUpdate()
     }
-
+//получение по выбранной дате
     func fetchTrackerForDate(for date: Date) -> [TrackerCategory] {
         guard let selectedWeekDay = weekday(from: date) else {
             return []
@@ -50,6 +50,24 @@ final class TrackerService {
 
             guard !trackersForDay.isEmpty else { return nil }
             return TrackerCategory(title: category.title, trackers: trackersForDay)
+        }
+    }
+    // фильтрация по выбранному фильтру
+    
+    func filterTrackers(_ categories: [TrackerCategory], by filter: FilterList, date: Date) -> [TrackerCategory] {
+        switch filter {
+        case .all, .today:
+            return categories
+        case .completed:
+            return categories.compactMap { category in
+                let filtered = category.trackers.filter { isTrackerCompleted($0, on: date) }
+                return filtered.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filtered)
+            }
+        case .uncompleted:
+            return categories.compactMap { category in
+                let filtered = category.trackers.filter { !isTrackerCompleted($0, on: date) }
+                return filtered.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filtered)
+            }
         }
     }
     

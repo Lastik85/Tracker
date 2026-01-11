@@ -8,6 +8,12 @@ final class TrackerViewController: UIViewController {
     
     private var visibleCategories: [TrackerCategory] = []
     private var currentDate = Date()
+    private var searchText = ""
+
+    private var selectedFilter: FilterList {
+        get { UserDefaultsService.shared.currentFilter }
+        set { UserDefaultsService.shared.currentFilter = newValue }
+    }
     
     // MARK: - UI Elements
     
@@ -38,30 +44,55 @@ final class TrackerViewController: UIViewController {
         collectionView.backgroundColor = .ypWhiteDay
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.alwaysBounceVertical = true
         return collectionView
     }()
     
-    private lazy var emptyTrackerImage: UIImageView = {
-        let image = UIImage(resource: .star)
-        let imageView = UIImageView(image: image)
+    private lazy var emptyStateImageView: UIImageView = {
+        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-    
-    private lazy var emptyTrackerLabel: UILabel = {
+
+    private lazy var emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.text = NSLocalizedString("emptyTrackersLabel", comment: "ememptyTrackersLabel text")
+        label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         return label
     }()
-    
-    private lazy var emptyTrackerStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [emptyTrackerImage, emptyTrackerLabel])
+
+    private lazy var emptyStateStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [emptyStateImageView, emptyStateLabel])
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.spacing = 8
+        stackView.isHidden = true
         return stackView
     }()
+
+    
+//    private lazy var emptyTrackerImage: UIImageView = {
+//        let image = UIImage(resource: .star)
+//        let imageView = UIImageView(image: image)
+//        imageView.contentMode = .scaleAspectFit
+//        return imageView
+//    }()
+//    
+//    private lazy var emptyTrackerLabel: UILabel = {
+//        let label = UILabel()
+//        label.text = NSLocalizedString("EmptyTrackersLabel", comment: "EmptyTrackersLabel text")
+//        label.font = .systemFont(ofSize: 12, weight: .medium)
+//        label.textAlignment = .center
+//        return label
+//    }()
+//    
+//    private lazy var emptyTrackerStackView: UIStackView = {
+//        let stackView = UIStackView(arrangedSubviews: [emptyTrackerImage, emptyTrackerLabel])
+//        stackView.axis = .vertical
+//        stackView.alignment = .center
+//        stackView.spacing = 8
+//        return stackView
+//    }()
     
     private lazy var filterButton: UIButton = {
         let button = UIButton(type: .system)
@@ -69,12 +100,28 @@ final class TrackerViewController: UIViewController {
         button.backgroundColor = .ypBlue
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         button.setTitle(title, for: .normal)
-        button.setTitleColor(.ypWhiteDay, for: .normal)
+        button.setTitleColor(.ypWhite, for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(tapFilter), for: .touchUpInside)
         return button
     }()
+    
+//    private lazy var emptySearchImage: UIImageView = {
+//        let image = UIImage(resource: .search)
+//        let imageView = UIImageView(image: image)
+//        imageView.contentMode = .scaleAspectFit
+//        return imageView
+//    }()
+//    
+//    private lazy var emptySearchLabel: UILabel = {
+//        let label = UILabel()
+//        label.text = NSLocalizedString("EmptySearchLabel", comment: "EmptyTrackersLabel text")
+//        label.font = .systemFont(ofSize: 12, weight: .medium)
+//        label.textAlignment = .center
+//        return label
+//    }()
+    
     
     // MARK: - Lifecycle
     
@@ -91,8 +138,7 @@ final class TrackerViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = .ypWhiteDay
-        [collectionView, emptyTrackerStackView, filterButton].forEach {view.addSubview($0)}
-        filterButton.isHidden = true
+        [collectionView, emptyStateStackView, filterButton].forEach {view.addSubview($0)}
     }
     
     private func setupNavigationBar() {
@@ -100,12 +146,14 @@ final class TrackerViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = NSLocalizedString("searchPlaceholderTitle", comment: "search text")
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
     private func setupConstraints() {
-        [collectionView, emptyTrackerStackView, datePicker, filterButton].forEach {
+        [collectionView, emptyStateStackView, datePicker, filterButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
@@ -114,10 +162,10 @@ final class TrackerViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            emptyTrackerImage.heightAnchor.constraint(equalToConstant: 80),
-            emptyTrackerImage.widthAnchor.constraint(equalToConstant: 80),
-            emptyTrackerStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyTrackerStackView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            emptyStateImageView.heightAnchor.constraint(equalToConstant: 80),
+            emptyStateImageView.widthAnchor.constraint(equalToConstant: 80),
+            emptyStateStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyStateStackView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             
             datePicker.widthAnchor.constraint(equalToConstant: 100),
             
@@ -128,20 +176,68 @@ final class TrackerViewController: UIViewController {
         ])
     }
     
-    private func updateVisibleCategories() {
-        visibleCategories = trackerService.fetchTrackerForDate(for: currentDate)
-        emptyTrackerStackView.isHidden = !visibleCategories.isEmpty
-        collectionView.reloadData()
+    private func showEmptyState(_ state: EmptyState?) {
+        guard let state = state else {
+            emptyStateStackView.isHidden = true
+            collectionView.isHidden = false
+            filterButton.isHidden = false
+            return
+        }
+        collectionView.isHidden = true
+        emptyStateStackView.isHidden = false
         
+        switch state {
+        case .noTrackers:
+            emptyStateImageView.image = UIImage(resource: .star)
+            emptyStateLabel.text = NSLocalizedString("EmptyTrackersLabel", comment: "text")
+            filterButton.isHidden = true
+        case .noResults:
+            emptyStateImageView.image = UIImage(resource: .search)
+            emptyStateLabel.text = NSLocalizedString(
+                "EmptySearchLabel",
+                comment: "No search results"
+            )
+            filterButton.isHidden = false
+        }
+    }
+    
+    private func updateVisibleCategories() {
+
+        let categoriesForDate = trackerService.fetchTrackerForDate(for: currentDate)
+        let filteredCategories = trackerService.filterTrackers(categoriesForDate, by: selectedFilter, date: currentDate)
+        visibleCategories = applySearch(to: filteredCategories)
+
+        if categoriesForDate.isEmpty {
+            showEmptyState(.noTrackers)
+        } else if visibleCategories.isEmpty {
+            showEmptyState(.noResults)
+        } else {
+            showEmptyState(nil)
+        }
+
+        filterButton.setTitleColor((selectedFilter == .all || selectedFilter == .today) ? .ypWhite : .ypRed, for: .normal)
+
+        collectionView.reloadData()
+    }
+
+
+    
+    private func applySearch(to categories: [TrackerCategory]) -> [TrackerCategory] {
+        
+        guard !searchText.isEmpty else { return categories }
+        
+        return categories.compactMap { category in
+            let filteredTrackers = category.trackers.filter {
+                $0.name.localizedCaseInsensitiveContains(searchText)
+            }
+            
+            return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filteredTrackers)
+        }
     }
     
     private var pendingReloadIndexPath: IndexPath?
     
-    private func completeTracker(
-        _ tracker: Tracker,
-        isCompleted: Bool,
-        at indexPath: IndexPath
-    ) {
+    private func completeTracker(_ tracker: Tracker, isCompleted: Bool,at indexPath: IndexPath) {
         guard trackerService.canCompletedTracker(on: currentDate) else {
             showFutureDateAlert()
             return
@@ -150,8 +246,7 @@ final class TrackerViewController: UIViewController {
         pendingReloadIndexPath = indexPath
         trackerService.toggleCompletion(for: tracker, on: currentDate)
     }
-    
-    
+
     private func showFutureDateAlert() {
         let alert = UIAlertController(
             title: NSLocalizedString("FutureDateAlertTitle", comment: "title text"),
@@ -165,11 +260,20 @@ final class TrackerViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func tapFilter() {
-        print("кнопка фильтры пока не реализована")
+        let filterVC = FiltersViewController()
+        filterVC.selectedFilter = selectedFilter
+        filterVC.delegate = self
+        let navController = UINavigationController(rootViewController: filterVC)
+        present(navController, animated: true)
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         currentDate = sender.date
+
+        if selectedFilter == .today {
+            selectedFilter = .all
+        }
+
         updateVisibleCategories()
         print("Выбраная дата: \(currentDate)")
     }
@@ -213,9 +317,7 @@ extension TrackerViewController: UICollectionViewDataSource {
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView,
-                        viewForSupplementaryElementOfKind kind: String,
-                        at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard kind == UICollectionView.elementKindSectionHeader,
               let header = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
@@ -235,9 +337,7 @@ extension TrackerViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension TrackerViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let availableWidth = collectionView.bounds.width - 10
         let width = availableWidth / 2
         return CGSize(width: width, height: 148)
@@ -258,13 +358,27 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
 
 extension TrackerViewController: TrackerServiceDelegate {
     func trackersDidUpdate() {
-        if let indexPath = pendingReloadIndexPath {
-            pendingReloadIndexPath = nil
-            collectionView.reloadItems(at: [indexPath])
-        } else {
-            updateVisibleCategories()
-        }
+        
+        updateVisibleCategories()
     }
     
 }
 
+extension TrackerViewController: FiltersViewControllerDelegate {
+    func filtersViewController(_ controller: FiltersViewController, didSelectFilter filter: FilterList) {
+        selectedFilter = filter
+        if filter == .today {
+            currentDate = Date()
+            datePicker.date = currentDate
+        }
+        updateVisibleCategories()
+    }
+}
+
+extension TrackerViewController: UISearchResultsUpdating {
+
+    func updateSearchResults(for searchController: UISearchController) {
+        searchText = searchController.searchBar.text ?? ""
+        updateVisibleCategories()
+    }
+}

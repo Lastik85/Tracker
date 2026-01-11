@@ -17,12 +17,19 @@
 
 //TrackerVC
 "searchPlaceholderTitle" = "поиск";
-"emptyTrackersLabel" = "Что будем отслеживать?";
-"filterButtonTitle" = "filters";
+"EmptyTrackersLabel" = "Что будем отслеживать?";
+"filterButtonTitle" = "Фильтры";
 "FutureDateAlertTitle" = "Нельзя отметить будущие даты";
 "FutureDateAlertMessage" = "Вы можете отмечать трекеры только за прошедшие и текущие даты";
+"EmptySearchLabel" = "Ничего не найдено";
 
 //TypeTrackerVC
 "habitButton" = "Привычка";
 "eventButton" = "Нерегулярное событие";
 "NavTitle" = "Создать трекер";
+
+//Filters
+"all" = "Все Трекеры";
+"today" = "Трекеры на сегодня";
+"completed:" = "Завершенные";
+"uncompleted" = "Не завершенные";

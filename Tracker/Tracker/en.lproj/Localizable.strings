@@ -16,13 +16,20 @@
 "statisticsTitle" = "Statistics";
 
 //TrackerVC
-"searchPlaceholderTitle" = "search";
-"emptyTrackersLabel" = "What are we going to track?";
-"filterButtonTitle" = "filters";
+"searchPlaceholderTitle" = "Search";
+"EmptyTrackersLabel" = "What are we going to track?";
+"filterButtonTitle" = "Filters";
 "FutureDateAlertTitle" = "Future dates cannot be marked";
 "FutureDateAlertMessage" = "You can mark trackers only for past and current dates";
+"EmptySearchLabel" = "Nothing was found";
 
 //TypeTrackerVC
 "habitButton" = "Habit";
 "eventButton" = "An irregular event";
 "NavTitle" = "Create a tracker";
+
+//Filters
+"all" = "All trackers";
+"today" = "Trackers for today";
+"completed:" = "Completed";
+"uncompleted" = "Not completed";
