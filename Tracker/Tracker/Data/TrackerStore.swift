@@ -79,6 +79,16 @@ final class TrackerStore: NSObject {
         }
     }
     
+    func deleteTracker(_ id:UUID) {
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        if let tracker = try? context.fetch(fetchRequest).first {
+            context.delete(tracker)
+            TrackerDataService.shared.saveContext()
+        }
+    }
+    
     // MARK: - Decoding
     
     func decode(_ data: TrackerCoreData) throws -> Tracker {

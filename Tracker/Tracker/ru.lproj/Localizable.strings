@@ -22,6 +22,10 @@
 "FutureDateAlertTitle" = "Нельзя отметить будущие даты";
 "FutureDateAlertMessage" = "Вы можете отмечать трекеры только за прошедшие и текущие даты";
 "EmptySearchLabel" = "Ничего не найдено";
+"DeleteTitle" = "Удалить";
+"EditTitle" = "Редактировать";
+"CancelTitle" = "Отменить";
+"MessageTitle" = "Уверены, что хотите удалить трекер?";
 
 //TypeTrackerVC
 "habitButton" = "Привычка";

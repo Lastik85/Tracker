@@ -1,10 +1,3 @@
-//
-//  AnaliticService.swift
-//  Tracker
-//
-//  Created by Андрей Пермяков on 08.01.2026.
-//
-
 import Foundation
 import AppMetricaCore
 
@@ -29,9 +22,6 @@ final class AnalyticsService {
         }
     
 }
-
-
-
 
 enum AppMetricaKey {
     static let key = "27647f33-6c49-436c-94ad-8800d8122f83"

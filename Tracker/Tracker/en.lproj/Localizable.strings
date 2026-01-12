@@ -22,6 +22,10 @@
 "FutureDateAlertTitle" = "Future dates cannot be marked";
 "FutureDateAlertMessage" = "You can mark trackers only for past and current dates";
 "EmptySearchLabel" = "Nothing was found";
+"DeleteTitle" = "Delete";
+"EditTitle" = "Edit";
+"CancelTitle" = "Cancel";
+"MessageTitle" = "Are you sure you want to delete the tracker?";
 
 //TypeTrackerVC
 "habitButton" = "Habit";

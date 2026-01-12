@@ -74,4 +74,17 @@ final class TrackerCategoryStore: NSObject {
             return TrackerCategory(title: title,trackers: trackers)
         }
     }
+    
+    func deleteTracker(_ tracker: Tracker){
+        let categories = fetchedResultsController.fetchedObjects ?? []
+        
+        for category in categories {
+            let trackers = category.trackers as? Set<TrackerCoreData> ?? []
+            if let trackerToDelete = trackers.first(where: { $0.id == tracker.id}) {
+                category.removeFromTrackers(trackerToDelete)
+            }
+        }
+        TrackerDataService.shared.saveContext()
+    }
 }
+

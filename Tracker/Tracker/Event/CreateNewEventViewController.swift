@@ -205,7 +205,7 @@ final class CreateNewEventViewController: UIViewController {
               let color = selectedColor
         else { return }
         let everyDaySchedule: Set<Week> = Set(Week.allCases)
-        let newTracker = Tracker(
+        let newTracker = Tracker( 
             id: UUID(),
             name: trackerName,
             color: color,

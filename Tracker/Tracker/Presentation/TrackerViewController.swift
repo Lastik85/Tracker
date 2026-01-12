@@ -15,6 +15,11 @@ final class TrackerViewController: UIViewController {
         set { UserDefaultsService.shared.currentFilter = newValue }
     }
     
+    private let editTitle = NSLocalizedString("EditTitle", comment: "Text")
+    private let deleteTitle = NSLocalizedString("DeleteTitle", comment: "Text")
+    private let cancelTitle = NSLocalizedString("CancelTitle", comment: "Text")
+    private let messageAlert = NSLocalizedString("MessageTitle", comment: "Text")
+    
     // MARK: - UI Elements
     
     private lazy var addTrackerButton: UIButton = {
@@ -69,30 +74,6 @@ final class TrackerViewController: UIViewController {
         stackView.isHidden = true
         return stackView
     }()
-
-    
-//    private lazy var emptyTrackerImage: UIImageView = {
-//        let image = UIImage(resource: .star)
-//        let imageView = UIImageView(image: image)
-//        imageView.contentMode = .scaleAspectFit
-//        return imageView
-//    }()
-//    
-//    private lazy var emptyTrackerLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = NSLocalizedString("EmptyTrackersLabel", comment: "EmptyTrackersLabel text")
-//        label.font = .systemFont(ofSize: 12, weight: .medium)
-//        label.textAlignment = .center
-//        return label
-//    }()
-//    
-//    private lazy var emptyTrackerStackView: UIStackView = {
-//        let stackView = UIStackView(arrangedSubviews: [emptyTrackerImage, emptyTrackerLabel])
-//        stackView.axis = .vertical
-//        stackView.alignment = .center
-//        stackView.spacing = 8
-//        return stackView
-//    }()
     
     private lazy var filterButton: UIButton = {
         let button = UIButton(type: .system)
@@ -106,22 +87,6 @@ final class TrackerViewController: UIViewController {
         button.addTarget(self, action: #selector(tapFilter), for: .touchUpInside)
         return button
     }()
-    
-//    private lazy var emptySearchImage: UIImageView = {
-//        let image = UIImage(resource: .search)
-//        let imageView = UIImageView(image: image)
-//        imageView.contentMode = .scaleAspectFit
-//        return imageView
-//    }()
-//    
-//    private lazy var emptySearchLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = NSLocalizedString("EmptySearchLabel", comment: "EmptyTrackersLabel text")
-//        label.font = .systemFont(ofSize: 12, weight: .medium)
-//        label.textAlignment = .center
-//        return label
-//    }()
-    
     
     // MARK: - Lifecycle
     
@@ -354,6 +319,49 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
                         insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 24, left: 0, bottom: 16, right: 0)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
+        
+        let editAction = UIAction(title: editTitle) { _ in
+            self.editTracker(indexPath: indexPath, tracker: tracker)}
+        
+        let deleteAction = UIAction(title: deleteTitle) { _ in
+            self.showDeleteAlert(for: tracker)
+        }
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in UIMenu(title: "", children: [editAction, deleteAction])
+        }
+     
+    }
+    
+private func editTracker( indexPath: IndexPath, tracker: Tracker) {
+        
+    }
+    
+    private func showDeleteAlert(for tracker: Tracker) {
+        let alert = UIAlertController(
+            title: nil,
+            message: messageAlert,
+            preferredStyle: .actionSheet
+        )
+
+        alert.addAction(UIAlertAction(
+            title: cancelTitle,
+            style: .cancel
+        ))
+
+        alert.addAction(UIAlertAction(
+            title: deleteTitle,
+            style: .destructive
+        ) { [weak self] _ in
+            self?.trackerService.deleteTracker(tracker)
+        })
+
+        present(alert, animated: true)
+    }
+    
+    
 }
 
 extension TrackerViewController: TrackerServiceDelegate {
