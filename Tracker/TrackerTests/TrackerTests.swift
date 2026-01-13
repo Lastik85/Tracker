@@ -1,19 +1,25 @@
-//
-//  TrackerTests.swift
-//  TrackerTests
-//
-//  Created by Андрей Пермяков on 06.01.2026.
-//
-
 import XCTest
 import SnapshotTesting
 @testable import Tracker
 
 class TrackerTests: XCTestCase {
 
-    func testViewController() {
+    func testViewControllerLightTheme() {
         let trackerVC = TrackerViewController()
-        assertSnapshots(of: trackerVC, as: [.image])
+        assertSnapshot(
+            of: trackerVC,
+            as: .image(on: .iPhone13, traits: UITraitCollection(userInterfaceStyle: .light)),
+            named: "light"
+        )
+    }
+    
+    func testViewControllerDarkTheme() {
+        let trackerVC = TrackerViewController()
+        assertSnapshot(
+            of: trackerVC,
+            as: .image(on: .iPhone13, traits: UITraitCollection(userInterfaceStyle: .dark)),
+            named: "dark"
+        )
     }
 
 }
