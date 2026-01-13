@@ -338,7 +338,8 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     
 private func editTracker(_ tracker: Tracker, category: String) {
     let editTrackerViewController = CreateNewHabitViewController(mode: .edit(tracker: tracker, category: category))
-    navigationController?.pushViewController(editTrackerViewController, animated: true)
+    let navController = UINavigationController(rootViewController: editTrackerViewController)
+    present(navController, animated: true)
     }
     
     private func showDeleteAlert(for tracker: Tracker) {
