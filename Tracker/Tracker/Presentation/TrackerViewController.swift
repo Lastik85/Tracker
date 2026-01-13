@@ -322,9 +322,10 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
+        let category = visibleCategories[indexPath.section].title
         
         let editAction = UIAction(title: editTitle) { _ in
-            self.editTracker(indexPath: indexPath, tracker: tracker)}
+            self.editTracker(tracker, category: category)}
         
         let deleteAction = UIAction(title: deleteTitle) { _ in
             self.showDeleteAlert(for: tracker)
@@ -335,8 +336,9 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
      
     }
     
-private func editTracker( indexPath: IndexPath, tracker: Tracker) {
-        
+private func editTracker(_ tracker: Tracker, category: String) {
+    let editTrackerViewController = CreateNewHabitViewController(mode: .edit(tracker: tracker, category: category))
+    navigationController?.pushViewController(editTrackerViewController, animated: true)
     }
     
     private func showDeleteAlert(for tracker: Tracker) {

@@ -77,6 +77,15 @@ final class TrackerService {
         delegate?.trackersDidUpdate()
     }
     
+    func updateTracker(_ tracker: Tracker, oldCategory: String, newCategory: String) {
+        trackerCore.updateTracker(tracker)
+        
+        if oldCategory != newCategory {
+            trackerCategoryStore.moveTracker(tracker, from: oldCategory, to: newCategory)
+        }
+        delegate?.trackersDidUpdate()
+    }
+    
     // MARK: - Tracker Completion
 
     func toggleCompletion(for tracker: Tracker, on date: Date) {

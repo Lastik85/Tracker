@@ -3,6 +3,7 @@ import UIKit
 final class CreateNewHabitViewController: UIViewController {
     
     // MARK: - Properties
+    private let mode: HabitEditorMode
     private let trackerService = TrackerService.shared
     private let cellName: [String] = ["Категория", "Расписание"]
     private var selectedCategory: String?
@@ -11,6 +12,14 @@ final class CreateNewHabitViewController: UIViewController {
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
     
+    init(mode: HabitEditorMode) {
+        self.mode = mode
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - UI Elements
     private lazy var cancelButton: UIButton = {
@@ -26,7 +35,6 @@ final class CreateNewHabitViewController: UIViewController {
     
     private lazy var createButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Создать", for: .normal)
         button.setTitleColor(.ypWhiteDay, for: .normal)
         button.backgroundColor = .ypGray
         button.layer.cornerRadius = 16
@@ -113,12 +121,41 @@ final class CreateNewHabitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .ypWhiteDay
-        setupNavigationTitle("Новая привычка")
         navigationItem.hidesBackButton = true
         addSubviews()
         setupConstraints()
+        configureForMode()
+        
         enableCreateButton()
     }
+    
+    private func configureForMode() {
+    switch mode {
+    case .create:
+        setupNavigationTitle("Новая привычка")
+        createButton.setTitle("Создать", for: .normal)
+        
+    case .edit(let tracker, let category):
+        setupNavigationTitle("Редактирование привычки")
+        createButton.setTitle("Сохранить", for: .normal)
+        
+        trackerName = tracker.name
+        selectedCategory = category
+        selectedSchedule = tracker.schedule
+        selectedEmoji = tracker.emoji
+        selectedColor = tracker.color
+        
+        nameTextField.text = tracker.name
+        tableView.reloadData()
+        
+        collectionView.reloadSections(IndexSet([
+            EmojiColorCollectionSection.emoji.rawValue,
+            EmojiColorCollectionSection.color.rawValue
+        ]))
+    }
+}
+
+    
     
     // MARK: - Private Methods
     private func addSubviews() {
@@ -218,6 +255,18 @@ final class CreateNewHabitViewController: UIViewController {
     }
     
     @objc private func tapCreate() {
+        switch mode {
+        case .create:
+            createTracker()
+            
+        case .edit(let oldTracker, let oldCategory):
+            updateTracker(oldTracker, oldCategory: oldCategory)
+            navigationController?.popViewController(animated: true)
+        }
+        
+    }
+    
+    private func createTracker () {
         guard let category = selectedCategory,
               !trackerName.isEmpty,
               !selectedSchedule.isEmpty,
@@ -233,6 +282,24 @@ final class CreateNewHabitViewController: UIViewController {
         )
         
         trackerService.createTracker(newTracker, inCategory: category)
+    }
+    
+    private func updateTracker (_ oldTracker: Tracker, oldCategory: String) {
+        guard let category = selectedCategory,
+              !trackerName.isEmpty,
+              !selectedSchedule.isEmpty,
+              let emoji = selectedEmoji,
+              let color = selectedColor
+        else { return }
+        let updateTracker = Tracker(
+            id: oldTracker.id,
+            name: trackerName,
+            color: color,
+            emoji: emoji,
+            schedule: selectedSchedule
+        )
+        
+        trackerService.updateTracker(updateTracker, oldCategory: oldCategory, newCategory: category)
         dismiss(animated: true)
     }
     
@@ -363,15 +430,16 @@ extension CreateNewHabitViewController: UICollectionViewDataSource {
             return cell
             
         case .color:
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: "ColorCell",
-                for: indexPath
-            ) as! ColorCell
-            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ColorCell", for: indexPath) as! ColorCell
             let color = Constants.colors[indexPath.item]
             cell.configureColor(with: color)
-            selectedColor == color ? cell.selectedColor(with: color) : cell.deselectedColor()
+            if color.isEqualToColor(selectedColor ?? .clear) {
+                cell.selectedColor(with: color)
+            } else {
+                cell.deselectedColor()
+            }
             return cell
+
         }
     }
     
@@ -430,7 +498,8 @@ extension CreateNewHabitViewController: UICollectionViewDelegate {
             
         case .color:
             let color = Constants.colors[indexPath.item]
-            selectedColor = selectedColor == color ? nil : color
+                   selectedColor = selectedColor?.isEqualToColor(color) == true ? nil : color
+            
         }
         
         UIView.performWithoutAnimation {

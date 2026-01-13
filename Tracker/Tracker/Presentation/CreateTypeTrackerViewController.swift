@@ -64,7 +64,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     // MARK: - Actions
     
     @objc func didTapHabitButton() {
-        let createNewHabitVC = CreateNewHabitViewController()
+        let createNewHabitVC = CreateNewHabitViewController(mode: .create)
         navigationController?.pushViewController(createNewHabitVC, animated: true)
     }
     

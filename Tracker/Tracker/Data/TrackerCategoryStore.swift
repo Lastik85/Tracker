@@ -86,5 +86,25 @@ final class TrackerCategoryStore: NSObject {
         }
         TrackerDataService.shared.saveContext()
     }
+    
+    func moveTracker( _ tracker: Tracker, from oldCategoryTitle: String, to newCategory: String) {
+        guard oldCategoryTitle != newCategory else { return }
+        
+        let categories = fetchedResultsController.fetchedObjects ?? []
+        
+        guard let trackerCore = categories
+            .compactMap({$0.trackers as? Set<TrackerCoreData>})
+            .flatMap({$0})
+            .first(where: {$0.id == tracker.id})
+        else { return }
+        
+        let oldCategory = categories.first(where: {$0.title == oldCategoryTitle})!
+        let newCategory = categories.first(where: {$0.title == newCategory})!
+        
+        oldCategory.removeFromTrackers(trackerCore)
+        newCategory.addToTrackers(trackerCore)
+        
+        TrackerDataService.shared.saveContext()
+    }
 }
 

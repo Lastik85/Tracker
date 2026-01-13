@@ -89,6 +89,20 @@ final class TrackerStore: NSObject {
         }
     }
     
+    func updateTracker (_ tracker:Tracker) {
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        
+        guard let trackerCoreData = try? context.fetch(fetchRequest).first else { return }
+        
+        trackerCoreData.name = tracker.name
+        trackerCoreData.emoji = tracker.emoji
+        trackerCoreData.color = colorMarshalling.hexString(from: tracker.color)
+        trackerCoreData.schedule = Week.encode(tracker.schedule)
+        
+        TrackerDataService.shared.saveContext()
+    }
+    
     // MARK: - Decoding
     
     func decode(_ data: TrackerCoreData) throws -> Tracker {
