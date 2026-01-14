@@ -9,7 +9,7 @@ final class TrackerViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var currentDate = Date()
     private var searchText = ""
-
+    
     private var selectedFilter: FilterList {
         get { UserDefaultsService.shared.currentFilter }
         set { UserDefaultsService.shared.currentFilter = newValue }
@@ -62,14 +62,14 @@ final class TrackerViewController: UIViewController {
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-
+    
     private lazy var emptyStateLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         return label
     }()
-
+    
     private lazy var emptyStateStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [emptyStateImageView, emptyStateLabel])
         stackView.axis = .vertical
@@ -107,12 +107,12 @@ final class TrackerViewController: UIViewController {
         super.viewDidAppear(animated)
         AnalyticsService.shared.reportScreenOpen(.main)
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         AnalyticsService.shared.reportScreenClose(.main)
     }
-
+    
     
     // MARK: - Private Methods
     
@@ -182,11 +182,11 @@ final class TrackerViewController: UIViewController {
     }
     
     private func updateVisibleCategories() {
-
+        
         let categoriesForDate = trackerService.fetchTrackerForDate(for: currentDate)
         let filteredCategories = trackerService.filterTrackers(categoriesForDate, by: selectedFilter, date: currentDate)
         visibleCategories = applySearch(to: filteredCategories)
-
+        
         if categoriesForDate.isEmpty {
             showEmptyState(.noTrackers)
         } else if visibleCategories.isEmpty {
@@ -194,13 +194,13 @@ final class TrackerViewController: UIViewController {
         } else {
             showEmptyState(nil)
         }
-
+        
         filterButton.setTitleColor((selectedFilter == .all || selectedFilter == .today) ? .ypWhite : .ypRed, for: .normal)
-
+        
         collectionView.reloadData()
     }
-
-
+    
+    
     
     private func applySearch(to categories: [TrackerCategory]) -> [TrackerCategory] {
         
@@ -226,7 +226,7 @@ final class TrackerViewController: UIViewController {
         pendingReloadIndexPath = indexPath
         trackerService.toggleCompletion(for: tracker, on: currentDate)
     }
-
+    
     private func showFutureDateAlert() {
         let alert = UIAlertController(
             title: NSLocalizedString("FutureDateAlertTitle", comment: "title text"),
@@ -250,11 +250,11 @@ final class TrackerViewController: UIViewController {
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         currentDate = sender.date
-
+        
         if selectedFilter == .today {
             selectedFilter = .all
         }
-
+        
         updateVisibleCategories()
         print("Выбраная дата: \(currentDate)")
     }
@@ -325,40 +325,56 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: 148)
     }
     
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 18)
     }
     
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 24, left: 0, bottom: 16, right: 0)
     }
     
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
         let category = visibleCategories[indexPath.section].title
         
         let editAction = UIAction(title: editTitle) { _ in
             AnalyticsService.shared.reportClick(screen: .main, item: .edit)
-            self.editTracker(tracker, category: category)}
-        
-        let deleteAction = UIAction(title: deleteTitle) { _ in
+            self.editTracker(tracker, category: category)
+        }
+        let deleteAction = UIAction(title: deleteTitle, attributes: [.destructive]) { _ in
             AnalyticsService.shared.reportClick(screen: .main, item: .delete)
             self.showDeleteAlert(for: tracker)
         }
         
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in UIMenu(title: "", children: [editAction, deleteAction])
+        return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil) { _ in
+            UIMenu(title: "", children: [editAction, deleteAction])
         }
-     
     }
     
-private func editTracker(_ tracker: Tracker, category: String) {
-    let editTrackerViewController = CreateNewHabitViewController(mode: .edit(tracker: tracker, category: category))
-    let navController = UINavigationController(rootViewController: editTrackerViewController)
-    present(navController, animated: true)
+    
+    func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard let indexPath = configuration.identifier as? IndexPath,
+              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else {
+            return nil
+        }
+        
+        return UITargetedPreview(view: cell.getCardViewForContextMenu())
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard let indexPath = configuration.identifier as? IndexPath,
+              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else {
+            return nil
+        }
+        
+        return UITargetedPreview(view: cell.getCardViewForContextMenu())
+    }
+    
+    private func editTracker(_ tracker: Tracker, category: String) {
+        let editTrackerViewController = CreateNewHabitViewController(mode: .edit(tracker: tracker, category: category))
+        let navController = UINavigationController(rootViewController: editTrackerViewController)
+        present(navController, animated: true)
     }
     
     private func showDeleteAlert(for tracker: Tracker) {
@@ -367,31 +383,28 @@ private func editTracker(_ tracker: Tracker, category: String) {
             message: messageAlert,
             preferredStyle: .actionSheet
         )
-
+        
         alert.addAction(UIAlertAction(
             title: cancelTitle,
             style: .cancel
         ))
-
+        
         alert.addAction(UIAlertAction(
             title: deleteTitle,
             style: .destructive
         ) { [weak self] _ in
             self?.trackerService.deleteTracker(tracker)
         })
-
+        
         present(alert, animated: true)
     }
-    
     
 }
 
 extension TrackerViewController: TrackerServiceDelegate {
     func trackersDidUpdate() {
-        
         updateVisibleCategories()
     }
-    
 }
 
 extension TrackerViewController: FiltersViewControllerDelegate {
@@ -406,7 +419,7 @@ extension TrackerViewController: FiltersViewControllerDelegate {
 }
 
 extension TrackerViewController: UISearchResultsUpdating {
-
+    
     func updateSearchResults(for searchController: UISearchController) {
         searchText = searchController.searchBar.text ?? ""
         updateVisibleCategories()

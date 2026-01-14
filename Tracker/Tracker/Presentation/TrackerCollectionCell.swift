@@ -160,6 +160,10 @@ final class TrackerCell: UICollectionViewCell {
         updateCompleteButton()
     }
     
+    func getCardViewForContextMenu() -> UIView {
+        return cardView
+    }
+    
     // MARK: - Lifecycle
     
     override func prepareForReuse() {
