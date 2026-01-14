@@ -27,6 +27,10 @@
 "CancelTitle" = "Cancel";
 "MessageTitle" = "Are you sure you want to delete the tracker?";
 
+//StatistikVC
+"StatisticEmpty" = "There is nothing to analyze yet";
+"CompletedTitle" = "Trackers completed";
+
 //TypeTrackerVC
 "habitButton" = "Habit";
 "eventButton" = "An irregular event";

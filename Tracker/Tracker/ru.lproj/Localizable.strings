@@ -27,6 +27,10 @@
 "CancelTitle" = "Отменить";
 "MessageTitle" = "Уверены, что хотите удалить трекер?";
 
+//StatistikVC
+"StatisticEmpty" = "Анализировать пока нечего";
+"CompletedTitle" = "Трекеров завершено";
+
 //TypeTrackerVC
 "habitButton" = "Привычка";
 "eventButton" = "Нерегулярное событие";
