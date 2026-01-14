@@ -303,6 +303,7 @@ final class CreateNewHabitViewController: UIViewController {
         )
         
         trackerService.createTracker(newTracker, inCategory: category)
+        dismiss(animated: true)
     }
     
     private func updateTracker (_ oldTracker: Tracker, oldCategory: String) {

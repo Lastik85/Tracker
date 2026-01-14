@@ -36,6 +36,10 @@ final class TrackerViewController: UIViewController {
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
         datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.backgroundColor = .ypWhite
+        datePicker.layer.cornerRadius = 8
+        datePicker.clipsToBounds = true
+        datePicker.overrideUserInterfaceStyle = .light
         datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         return datePicker
     }()
@@ -98,6 +102,17 @@ final class TrackerViewController: UIViewController {
         trackerService.delegate = self
         updateVisibleCategories()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsService.shared.reportScreenOpen(.main)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        AnalyticsService.shared.reportScreenClose(.main)
+    }
+
     
     // MARK: - Private Methods
     
@@ -207,7 +222,7 @@ final class TrackerViewController: UIViewController {
             showFutureDateAlert()
             return
         }
-        
+        AnalyticsService.shared.reportClick(screen: .main, item: .track)
         pendingReloadIndexPath = indexPath
         trackerService.toggleCompletion(for: tracker, on: currentDate)
     }
@@ -225,6 +240,7 @@ final class TrackerViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func tapFilter() {
+        AnalyticsService.shared.reportClick(screen: .main, item: .filter)
         let filterVC = FiltersViewController()
         filterVC.selectedFilter = selectedFilter
         filterVC.delegate = self
@@ -244,6 +260,7 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func addTracker() {
+        AnalyticsService.shared.reportClick(screen: .main, item: .addTrack)
         let createTypeVC = CreateTypeTrackerViewController()
         let navController = UINavigationController(rootViewController: createTypeVC)
         present(navController, animated: true)
@@ -325,9 +342,11 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
         let category = visibleCategories[indexPath.section].title
         
         let editAction = UIAction(title: editTitle) { _ in
+            AnalyticsService.shared.reportClick(screen: .main, item: .edit)
             self.editTracker(tracker, category: category)}
         
         let deleteAction = UIAction(title: deleteTitle) { _ in
+            AnalyticsService.shared.reportClick(screen: .main, item: .delete)
             self.showDeleteAlert(for: tracker)
         }
         
