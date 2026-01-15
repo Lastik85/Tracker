@@ -33,7 +33,7 @@ final class TrackerCell: UICollectionViewCell {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .white
+        label.textColor = .ypWhite
         label.numberOfLines = 2
         return label
     }()
@@ -60,7 +60,7 @@ final class TrackerCell: UICollectionViewCell {
         stackView.alignment = .center
         stackView.layoutMargins = UIEdgeInsets(top: 8, left: 12, bottom: 16, right: 12)
         stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.backgroundColor = .white
+        stackView.backgroundColor = .ypWhiteDay
         return stackView
     }()
     
@@ -134,22 +134,6 @@ final class TrackerCell: UICollectionViewCell {
         completeButton.alpha = buttonAlpha
     }
     
-    private func getDayString(_ value: Int) -> String {
-        let mod10 = value % 10
-        let mod100 = value % 100
-        
-        switch (mod100, mod10) {
-        case (11...14, _):
-            return "\(value) дней"
-        case (_, 1):
-            return "\(value) день"
-        case (_, 2...4):
-            return "\(value) дня"
-        default:
-            return "\(value) дней"
-        }
-    }
-    
     // MARK: - Actions
     
     @objc private func completeButtonTapped() {
@@ -171,9 +155,13 @@ final class TrackerCell: UICollectionViewCell {
         cardView.backgroundColor = tracker.color
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
-        daysCountLabel.text = getDayString(completedDays)
+        daysCountLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "Text for number of days"), completedDays)
         
         updateCompleteButton()
+    }
+    
+    func getCardViewForContextMenu() -> UIView {
+        return cardView
     }
     
     // MARK: - Lifecycle

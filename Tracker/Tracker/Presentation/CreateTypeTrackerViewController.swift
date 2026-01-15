@@ -2,14 +2,17 @@ import UIKit
 
 final class CreateTypeTrackerViewController: UIViewController {
     
+    private let navTitle = NSLocalizedString("NavTitle", comment: "Create type tracker")
+    
     // MARK: - UI Elements
     
     private lazy var habitButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = .ypBlackDay
-        button.setTitle("Привычка", for: .normal)
+        let title = NSLocalizedString("habitButton", comment: "habit")
+        button.setTitle(title, for: .normal)
         button.layer.cornerRadius = 16
-        button.tintColor = .white
+        button.tintColor = .ypWhiteDay
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(didTapHabitButton), for: .touchUpInside)
         return button
@@ -18,9 +21,10 @@ final class CreateTypeTrackerViewController: UIViewController {
     private lazy var anIrregularEventButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = .ypBlackDay
-        button.setTitle("Нерегулярное событие", for: .normal)
+        let title = NSLocalizedString("eventButton", comment: "event")
+        button.setTitle(title, for: .normal)
         button.layer.cornerRadius = 16
-        button.tintColor = .white
+        button.tintColor = .ypWhiteDay
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(didTapAnIrregularEventButton), for: .touchUpInside)
         return button
@@ -38,8 +42,8 @@ final class CreateTypeTrackerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        setupNavigationTitle("Создать трекер")
+        view.backgroundColor = .ypWhiteDay
+        setupNavigationTitle(navTitle)
         view.addSubview(stackView)
         setupConstraints()
     }
@@ -60,7 +64,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     // MARK: - Actions
     
     @objc func didTapHabitButton() {
-        let createNewHabitVC = CreateNewHabitViewController()
+        let createNewHabitVC = CreateNewHabitViewController(mode: .create)
         navigationController?.pushViewController(createNewHabitVC, animated: true)
     }
     

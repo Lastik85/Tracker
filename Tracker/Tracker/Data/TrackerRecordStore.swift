@@ -45,6 +45,19 @@ final class TrackerRecordStore {
             TrackerDataService.shared.saveContext()
         }
     }
+    
+    func deleteAllRecords(for trackerId: UUID) {
+        let fetchRequest = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(
+            format: "trackerId == %@",
+            trackerId as CVarArg
+        )
+
+        let records = (try? context.fetch(fetchRequest)) ?? []
+        records.forEach { context.delete($0) }
+
+        TrackerDataService.shared.saveContext()
+    }
 
     
     func fetchRecords() -> Set<TrackerRecord> {

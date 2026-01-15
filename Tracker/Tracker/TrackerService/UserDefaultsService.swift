@@ -16,9 +16,29 @@ final class UserDefaultsService {
             storage.set(newValue, forKey: UserDefaultsKeys.hasSeenOnboarding)
         }
     }
+    
+    var currentFilter: FilterList {
+        get {
+            if let rawValue = storage.string(forKey: UserDefaultsKeys.filter),
+               let filter = FilterList(rawValue: rawValue) {
+                return filter
+            }
+            return .all
+        }
+        set {
+            storage.set(newValue.rawValue, forKey: UserDefaultsKeys.filter)
+        }
+    }
+    
+    func clearCurrentFilter() {
+        storage.removeObject(forKey: UserDefaultsKeys.filter)
+    }
+
+    
 }
 
 enum UserDefaultsKeys {
     static let onboardingCompleted = "OnboardingCompleted"
     static let hasSeenOnboarding = "hasSeenOnboarding"
+    static let filter = "currentFilter"
 }

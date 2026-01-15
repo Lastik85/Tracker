@@ -53,6 +53,39 @@ final class TrackerService {
         }
     }
     
+    func filterTrackers(_ categories: [TrackerCategory], by filter: FilterList, date: Date) -> [TrackerCategory] {
+        switch filter {
+        case .all, .today:
+            return categories
+        case .completed:
+            return categories.compactMap { category in
+                let filtered = category.trackers.filter { isTrackerCompleted($0, on: date) }
+                return filtered.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filtered)
+            }
+        case .uncompleted:
+            return categories.compactMap { category in
+                let filtered = category.trackers.filter { !isTrackerCompleted($0, on: date) }
+                return filtered.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filtered)
+            }
+        }
+    }
+    
+    func deleteTracker(_ tracker: Tracker){
+        trackerRecordStore.deleteAllRecords(for: tracker.id)
+        trackerCategoryStore.deleteTracker(tracker)
+        trackerCore.deleteTracker(tracker.id)
+        delegate?.trackersDidUpdate()
+    }
+    
+    func updateTracker(_ tracker: Tracker, oldCategory: String, newCategory: String) {
+        trackerCore.updateTracker(tracker)
+        
+        if oldCategory != newCategory {
+            trackerCategoryStore.moveTracker(tracker, from: oldCategory, to: newCategory)
+        }
+        delegate?.trackersDidUpdate()
+    }
+    
     // MARK: - Tracker Completion
 
     func toggleCompletion(for tracker: Tracker, on date: Date) {

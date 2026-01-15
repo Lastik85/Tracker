@@ -2,6 +2,9 @@ import UIKit
 
 final class TapBarViewController: UITabBarController {
     
+    let trackersTitle = NSLocalizedString("trackersTitle", comment: "Text displayed on tracker title")
+    let statisticsTitle = NSLocalizedString("statisticsTitle", comment: "Text displayed on statistics title")
+    
     override func viewDidLoad() {
         super.viewDidLoad( )
         setupViewControllers()
@@ -12,22 +15,22 @@ final class TapBarViewController: UITabBarController {
         
         let trackerViewController = TrackerViewController()
         trackerViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: trackersTitle,
             image: UIImage(resource: .trackers),
             selectedImage: nil
         )
         
         let statisticViewController = StatisticViewController()
         statisticViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: statisticsTitle,
             image: UIImage(resource: .rabbit),
             selectedImage: nil
         )
         let navigationTracker = UINavigationController(rootViewController: trackerViewController)
-        trackerViewController.title = "Трекеры"
+        trackerViewController.title = trackersTitle
         navigationTracker.navigationBar.prefersLargeTitles = true
         let navigationStatistics = UINavigationController(rootViewController: statisticViewController)
-        statisticViewController.title = "Статистика"
+        statisticViewController.title = statisticsTitle
         navigationStatistics.navigationBar.prefersLargeTitles = true
         viewControllers = [navigationTracker, navigationStatistics]
     }
@@ -42,5 +45,5 @@ final class TapBarViewController: UITabBarController {
             tabBar.scrollEdgeAppearance = appearance
         }
     }
-
+    
 }
