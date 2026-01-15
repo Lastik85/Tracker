@@ -2,7 +2,7 @@ import XCTest
 import SnapshotTesting
 @testable import Tracker
 
-class TrackerTests: XCTestCase {
+final class TrackerTests: XCTestCase {
 
     func testViewControllerLightTheme() {
         let trackerVC = TrackerViewController()
